@@ -6,7 +6,6 @@ import ibm_boto3
 from ibm_botocore.client import Config, ClientError
 import io
 import base64
-from flask_paginate import Pagination, get_page_parameter
 import PIL
 from PIL import Image,ImageDraw
 from bson.objectid import ObjectId

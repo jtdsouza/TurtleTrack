@@ -1,4 +1,40 @@
-&nbsp;
+<div class="row row-content align-items-center">
+    <div class="col-12">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5>About WildTrack</h5>
+            </div>
+            <div class="card-body"> 
+                <p><a href="https://wildtrack.org">WildTrack (wildtrack.org)</a> is a non-profit organization that aims to develop and provide non-invasive but effective monitoring of endangered species in order to mitigate human
+                    wildlife conflicts and prevent illegal poaching. The mission of the Piedmont Wildlife Center is to instill id perole a positive connection to nature and to develope a community based approach to observation.</p>
+                <p>Useful WildTrack Resources: </p>
+                <ul>
+                    <li><a href="https://wildtrack.org/how-fit-works/" target="_blank">What is FIT</a></li>
+                    <li><a href="https://wildtrack.org/conservationfit/partner-with-us/" target="_blank">How to partner with Wildtrack</a> </li>
+                    <li>   <a href="https://www.piedmontwildlifecenter.org/turtle-trekkers" target="_blank">How to take shell images</a> </li>
+                    <li><a href="https://wildtrack.org/blog/" target="_blank">WildTrack blog</a></li>
+                    <li><a href="https://wildtrack.org/conservationfit/where-we-work/" target="_blank">Where we work</a></li>
+                    <li><a href="https://wildtrack.org/conservationfit/helping-your-organization/" target="_blank">Helping your Organization network</a></li>
+                    <li><a href="https://wildtrack.org/conservationfit/education-and-communities/" target="_blank">Education and communities</a></li>
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>   
+
+<div class="row row-content align-items-center">
+    <div class="col-12">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5>System Architecture</h5>
+            </div>
+            <div class="card-body"> 
+                <img src="static/images/system_architecture.jpg" class="align-items-center">
+            </div>
+        </div>
+    </div>
+</div>  
 {% block content %}    
     <div class="container-fluid">
         <div class="row row-content align-items-center">
@@ -11,29 +47,21 @@
                                 is much appreciated and any <a data-toggle="modal" href="#feedbackModal">feedback or questions</a> you have for us is welcome and highly valued!</em></span>
                         </div>
                         <div class="card-body"> 
-                            <p>Navigate to the <em><a href="/sightings_page">Observations</a></em> tab to view images aggregated by date, species, and observer.</p>
+                            <p>Navigate to the <em><a href="/sightings_page">Observations</a></em> tab to view images grouped by date, species, and observer.</p>
                             <p> Navigate to the <em><a href="/images_page">Images</a></em> tab to view all images that have been contributed to the WildTrackAI System.</p>
                             <p> Images are displayed with associated information received with the image, information added during AI processing, and/or information contributed by the site administrators. Please send <em><a data-toggle="modal" href="#feedbackModal">Feedback</a></em> with comments and questions regarding the information presented.</p>
                                 <dl>
                                     <dt>Image</dt>
-                                    <dd>Displays the raw image received. If the image has been processed and the system has detected one or more footprints in the image, a yellow bounding box is drawn around each footprint.</dd>
-                                    <dt>Species, Individual, Sex, Foot</dt>
-                                    <dd>Labels entered by the image contributor either in Epicollect, or edited by WildTrack</dd>
-                                    <dt>Rating, WildTrack Comments</dt>
-                                    <dd>WildTrack rates the quality of the image from a "fit for analysis" perspective on a 5 point scale: 
-                                        <ol>
-                                            <li>Partial footprint of any quality. A footprint that is incomplete.</li>
-                                            <li>Poor Quality. Toe/heel outlines not visible. Hard to see if it's a footprint or something else.</li>
-                                            <li>Medium Quality. Toe/heel outlines partially visible.</li>
-                                            <li>Good Quality. Toe/heel outlines mostly visible.</li>
-                                            <li>Excellent Quality. FIT-usable. Toe/heel outlines clear and undistorted.</li>
-                                        </ol>
+                                   
+                                    <dd>Labels entered by the image contributor in Epicollect</dd>
+                                    <dt>Rating; Piedmont Comments</dt>
+                                    <dd>Piedmont rates the quality of the image on a 5 point scale: 
+                                        
                                         A rating of 0 indicates that there was no image received. Any relevant qualitative feedback will be displayed in the WildTrack Comments column.
                                         Note that while it is always desirable to have the highest quality image, we are looking to capture as many images as possible (even with lower quality) and as outlined in the success definition section, evaluate how the AI models do with lower quality images.
                                     </dd>
                                     <dt>AI Predictions</dt>
-                                    <dd>Displays the species and individual predicted by the system along with % confidence level. If the confidence level falls below a predefined threshold, <em>Unknown</em> is displayed. <p class=text-info> Note that the current model is trained on 13 species <em>(Amur Tiger, 
-                                        Bengal Tiger, Leopard, Cheetah, Puma, Jaguar, African lion, African elephant, Black Rhino, White Rhino, Lowland Tapir, Bongo and Otter)</em>. The model tries to assign any image to one of these species. </p></dd>
+                                    <dd>Displays the species and individual predicted by the system along with % confidence level. If the confidence level falls below a predefined threshold, <em>Unknown</em> is displayed. <p class=text-info> Note that the current model is trained on 25 turtles. The model tries to assign any image to one of these individuals, if it does not match up with any, it creates a new individual. </p></dd>
                                     <dt>Recorder Information</dt>
                                     <dd>The contributor information (along with comments) received with the original image submission.</dd>
                                

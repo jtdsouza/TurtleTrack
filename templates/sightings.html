@@ -1,20 +1,6 @@
 {% include 'toolbar-user.html' %}
-
-{% block header %}
-<header class="jumbotron">
-  <div class="row row-header">
-      <div class="col">
-        <div class="alert alert-info">
-          <small>Last Model Refresh: <strong><em>{{last_model_refresh}}. </em></strong> Species: <em>Amur Tiger, Bengal Tiger, Cheetah, Leopard, Puma, Jaguar, African Lion, African Elephant, Black Rhino, White Rhino, Lowland Tapir, Bongo, Otter.</em> </small>
-        </div>
-      </div>
-  </div>
-</header>
-
-    
-{% endblock %}
-
-
+<br>
+<h1><center>Observations</center></h1>
 {% block content %}  
     <div class="container-fluid">
     
@@ -140,7 +126,7 @@
                 align: 'center',
                 valign: 'middle',
               }, {
-                title: 'WildTrack Comments',
+                title: 'Piedmont Comments',
                 field: 'ExpertComments',
                 align: 'center',
                 valign: 'middle'
@@ -236,7 +222,7 @@
                 valign: 'middle',
                 formatter:"ModalLinkFormatter"
               },{
-                title: 'WildTrack Comments',
+                title: 'Piedmont Comments',
                 field: 'ExpertComments',
                 align: 'center',
                 valign: 'middle'
