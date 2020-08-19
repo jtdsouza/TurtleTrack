@@ -110,7 +110,7 @@ def Get_Inference(value,confidence,threshold):
     if float(confidence)<float(threshold):
         result="Unknown"
     else:
-        result=value+" ("+confidence+")"
+        result=value+" ("+confidence+"%)"
     return result
 
 def skiplimit(dbcoll,query_string={},project_string={},page_size=10, offset=0,sort=None,order=""):
