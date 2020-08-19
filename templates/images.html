@@ -28,22 +28,15 @@
                 data-height="650">
                 <thead>
                     <tr>
-                        <th rowspan="2" data-field="annotated_image" data-formatter="ModalLinkFormatter" data-valign="middle">Image</th>
-                        <th rowspan="2" data-field="Individual" data-valign="middle">Individual</th>
-                        <th rowspan="2" data-field="Rating" data-valign="middle">Rating</th>
-                        <th rowspan="2" data-field="CombinedComments" data-valign="middle">WildTrack Comments</th>
-                        <th colspan="2" data-halign="center">AI Predictions</th>
-                        <th colspan="4" data-halign="center">Recorder Information</th>
-                        <th rowspan="2" data-field="ID" data-visible="false">ID</th>
-                    </tr>
-                    <tr>
-                        <th data-valign="middle" data-field="Species_Inference">Species</th>
-                        <th data-valign="middle" data-field="Individual_Inference">Individual</th>
+                        <th data-field="annotated_image" data-formatter="ModalLinkFormatter" data-valign="middle">Image</th>
+                        <th data-field="Individual" data-valign="middle">Individual</th>
+                        <th data-valign="middle" data-field="Individual_Inference">Predicted Individual</th>
                         <th data-field="TimeStamp" data-valign="middle">Date</th>
                         <th data-field="Organization" data-valign="middle">Organization</th>
                         <th data-field="Name" data-valign="middle">Name</th>
                         <th data-field="UserComments" data-valign="middle">Comments</th>
-                         </tr>
+                        <th data-field="ID" data-visible="false">ID</th>
+                    </tr>
                 </thead>
             </table>
         </div>
@@ -101,11 +94,6 @@ function launchModal(ID) {
         field: 'image',
         align: 'center',
         valign: 'middle',
-        }, {
-        title: 'Annotated Image',
-        field: 'annotated_image',
-        align: 'center',
-        valign: 'middle'
         }
     ],
     url:detail_url,
@@ -116,26 +104,6 @@ function launchModal(ID) {
     };
 
 
-    $("#imagetable").on('editable-save.bs.table', function(editable, field, row, oldValue, $el) {
-        //console.log("editable:", editable);
-        console.log("field:", field);
-        console.log("row", row[field],row["ID"]);
-        console.log("oldValue", oldValue);
-        //console.log("el", $el);
-        var update_data={"ID":row["ID"],"Field":field,"Value":row[field]};
-        var update_url='/update_artifact_details';
-        //console.log(comment_data);
-        $.ajax({
-          type: 'POST',
-                url: update_url,
-                data: update_data,
-                success: function(response){
-                    console.log(response);
-                },
-                error: function(error){
-                    console.log(error);
-                }
-            });
-    });
+    
 </script>
 {% endblock %} 

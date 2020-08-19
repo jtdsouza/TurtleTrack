@@ -22,8 +22,7 @@ TEXT_BUCKET="turtletrack"
 MONGO_DB='TurtleTrack'
 
 #Constants for Inference THRESHOLDS
-SPECIES_THRESHOLD=0
-INDIVIDUAL_THRESHOLD=0
+THRESHOLD=0
 USE_DETECTION_CLASSES=False
 FIELD_FACTOR=1.1 #Multiply fielf confidences by this factor
 
@@ -661,7 +660,7 @@ def GetSightingDetail(sighting):
             record["ExpertComments"]=""
         TimeStamp=sighting.get("TimeStamp","")
         if TimeStamp != "":
-            record["TimeStamp"]=TimeStamp.get("created_at","").split("T")[0]
+            record["TimeStamp"]=TimeStamp.get("uploaded_at","").split("T")[0]
         ExpertLabels=sighting.get("ExpertLabels","")
         if ExpertLabels != "":
             record["Species"]=ExpertLabels.get("Species","")
@@ -683,26 +682,14 @@ def GetSightingDetail(sighting):
         if References != "":
             record["Source"]=References.get("Source","")
 
-        Species_Inference=sighting.get("Species_Inference","")
-        #print("Species Inference",Species_Inference)
-        species=""
+        Individual_Inference=sighting.get("Individual_Inference","")
         individual=""
-        if Species_Inference != "":
-            species_value=Species_Inference.get("value","")
-            species_confidence=Species_Inference.get("confidence","")
-            Individual_Inference=sighting.get("Individual_Inference","")
-            #print("Individual Inference",Individual_Inference)
-            if Individual_Inference != "":
-                ind_value=Individual_Inference.get("value","")
-                ind_confidence=Individual_Inference.get("confidence","")
-            if species_value!="":
-                species=Get_Inference(species_value,species_confidence,SPECIES_THRESHOLD)
-                if species=='Unknown':
-                    individual='Unknown'
-                elif ind_value!="":
-                    individual=Get_Inference(ind_value,ind_confidence,INDIVIDUAL_THRESHOLD)
-                record["Species_Inference"]=species
-                record["Individual_Inference"]=individual
+        if Individual_Inference != "":
+            ind_value=Individual_Inference.get("value","")
+            ind_confidence=Individual_Inference.get("confidence",0)
+            if ind_value!="":
+                individual=Get_Inference(ind_value,ind_confidence,THRESHOLD)
+            record["Individual_Inference"]=individual
         #print("Getting Artifact Info")
         artifact_list=colartifacts.find({"Sighting":ID,"References.s3_image_name":{"$exists":1}})
         record["Artifacts"]=[]
@@ -734,7 +721,7 @@ def get_sightings():
     #print("Params: ",search_str,sort,order,offset,limit)
 
     #Hardcode sort to reverse chronological for now
-    sort="TimeStamp.created_at"
+    sort="TimeStamp.uploaded_at"
     order="desc"
 
     #print(mycol.database,mycol.full_name)
@@ -770,14 +757,14 @@ def get_sightings():
 
 #Given current species and individual prediction, returns updated one if candidate predicton 
 # has higher confidence scores
-def UpdateBestPredictions(species_current,individual_current,species_new,individual_new):
-    #print("Updating... ",(species_current,individual_current,species_new,individual_new))
-    sconf_current=species_current.get("confidence",0)
-    sconf_new=species_new.get("confidence",0)
-    result=[species_current,individual_current]
-    if float(sconf_new)>SPECIES_THRESHOLD and float(sconf_new)>float(sconf_current):
-        result=[species_new,individual_new]
-    #print("Best result: ",result)
+def UpdateBestPredictions(individual_current,individual_new):
+    print("Updating... ",(individual_current,individual_new))
+    conf_current=individual_current.get("confidence",0)
+    conf_new=individual_new.get("confidence",0)
+    result=individual_current
+    if float(conf_new)>THRESHOLD and float(conf_new)>float(conf_current):
+        result=individual_new
+    print("Best result: ",result)
     return result
 
 
@@ -788,14 +775,6 @@ def GetArtifactDetail(artifact):
     try:
         blob["ID"]=str(artifact["_id"])
         blob["Sighting"]=str(artifact.get("Sighting",""))
-        ExpertLabels=artifact.get("ExpertLabels","")
-        if ExpertLabels != "":
-            blob["Foot"]=ExpertLabels.get("Foot","")
-            blob["Rating"]=ExpertLabels.get("Rating","")
-        UserLabels=artifact.get("UserLabels","")
-        if UserLabels != "":
-            if blob.get("Foot","")=="":
-                blob["Foot"]=UserLabels.get("Foot","")
         Comments=artifact.get("Comments","")
         if Comments != "":
             blob["UserComments"]=Comments.get("UserComments","")
@@ -815,99 +794,23 @@ def GetArtifactDetail(artifact):
     else:
         try:
             image_stream=get_item(BLOB_BUCKET,filename)
-            num_detections=len(artifact.get("Footprint_Detection",""))
-            #blob["annotated_image"]="data:image/jpeg;base64,"+((base64.b64encode(image_stream)).decode('UTF-8'))
-            #print("In: ",num_detections)
-            #if num_detections==0 and len(image_stream)>0:
             if len(image_stream)>0:
                 blob["annotated_image"]="<img src=\"data:image/jpeg;base64,"+((base64.b64encode(image_stream)).decode('UTF-8')+
                 "\" class=\"img-fluid img-thumbnail\" alt=\"Annotated images\" loading=\"lazy\" width=\"260\" height=\"260\">")
             try:
-                best_spec={"value":"","confidence":0}
-                best_ind={"value":"","confidence":0}
-                Species_Inference=artifact.get("Species_Inference","")
-                if Species_Inference!="":
-                    Individual_Inference=artifact.get("Individual_Inference","")
-                    best_spec,best_ind=UpdateBestPredictions(best_spec,best_ind,Species_Inference,Individual_Inference)
-                    #print("First Best: ",best_spec,best_ind)
+                inference=artifact.get("Individual_Inference","")
+                if inference!="":
+                    ind_prediction=inference.get("value","")
+                    ind_confidence=inference.get("confidence",0)
 
-                num_detections=len(artifact.get("Footprint_Detection",""))
-                #print("Detections: ",num_detections)
-                if num_detections>0:
-                    individuals=""
-                    species=""
-                    img=Image.open(io.BytesIO(image_stream))
 
-                    draw = ImageDraw.Draw(img)
-
-                    for i in range(num_detections):
-                        
-
-                        if USE_DETECTION_CLASSES:
-                            detected_prediction=artifact["Footprint_Detection"][i].get("value","")
-
-                            if detected_prediction!="":
-                                # JTD+2 Comment flip to suppress yolo species classification
-                                detected_species_prediction=detected_prediction
-                                #detected_species_prediction=""
-                                if detected_species_prediction!="":
-                                    detected_species_confidence=artifact["Footprint_Detection"][i].get("confidence",0)
-                                 
-                                    detected_species_confidence=min(100,round(float(detected_species_confidence)*FIELD_FACTOR,2))
-                                
-                                    Detected_Individual_Inference=artifact["Footprint_Detection"][i].get("Detected_Individual_Inference","")
-                                    if Detected_Individual_Inference=="":
-                        
-                                        Detected_Individual_Inference={"value":"","confidence":0}
-                                    best_spec,best_ind=UpdateBestPredictions(best_spec,best_ind,{"value":detected_species_prediction,"confidence":detected_species_confidence},
-                                    Detected_Individual_Inference)
-
-                                    #print("Detected & Classified: ",best_spec,best_ind)
-                            
-                        Species_Inference=artifact["Footprint_Detection"][i].get("Species_Inference","")
-
-                        if Species_Inference != "":
-                            if blob.get("AI_Use","")=="":
-                                updatedconf=min(100,round(float(Species_Inference.get("confidence",0))*FIELD_FACTOR,2))
-                                Species_Inference["confidence"]=str(updatedconf)
-                            Individual_Inference=artifact["Footprint_Detection"][i].get("Individual_Inference","")
-                            if Individual_Inference != "":
-                                best_spec,best_ind=UpdateBestPredictions(best_spec,best_ind,Species_Inference,Individual_Inference)  
-                                #print("Detected: ",best_spec,best_ind)
-                        
-                        coordinates=artifact["Footprint_Detection"][i]["coordinates"].split(',')
-                        shape=[(int(coordinates[0]),int(coordinates[1])),(int(coordinates[2]),int(coordinates[3]))]
-                        #print("Shape: ",shape)
-                        draw.rectangle(shape, fill =None, outline ="yellow",width=20) 
-                    
-                    byteIO = io.BytesIO()
-
-                    img.save(byteIO, format='JPEG',quality=60)
-                    byteArr = byteIO.getvalue()
-
-                    #blob["annotated_image"]="<img src=\"data:image/jpeg;base64,"+((base64.b64encode(byteArr)).decode('UTF-8')+
-                    #"\" class=\"img-fluid img-thumbnail\" alt=\"Annotated images\" loading=\"lazy\" width=\"260\" height=\"260\"")
-                    #**JTD - Temporarily commenting out
-                    #blob["Individual_Inference"].append("<br>With detection:<br> "+individuals)
-                    #blob["Species_Inference"].append("<br>With detection:<br> "+species)
-                
-                spec_prediction=best_spec.get("value","")
-                spec_confidence=best_spec.get("confidence","")
-                ind_prediction=best_ind.get("value","")
-                ind_confidence=best_ind.get("confidence","")
-                #print(spec_prediction,spec_confidence,ind_prediction,ind_confidence)
-
-                if float(spec_confidence)>SPECIES_THRESHOLD:
-                    blob["Species_Inference"]=[spec_prediction+" ("+str(spec_confidence)+"%)"]
-
-                    if float(ind_confidence)>INDIVIDUAL_THRESHOLD:
+                    if float(ind_confidence)>THRESHOLD:
                         blob["Individual_Inference"]=[ind_prediction+" ("+str(ind_confidence)+"%)"]
 
                     else:
                         blob["Individual_Inference"]="Unknown"
-                else:
-                    blob["Species_Inference"]="Unknown"
-                    blob["Individual_Inference"]="Unknown"
+
+
 
             except:
                 print("Could not obtain all inference info")
@@ -1031,7 +934,7 @@ def get_artifacts():
                     #print("from sightings: ",docId)
             query_string={"References.s3_image_name":{"$exists":1},"$text": { "$search": search_str } }
             #Hardcoding sort to reverse chronological for now
-            sort="TimeStamp.created_at"
+            sort="TimeStamp.uploaded_at"
             order="desc"
             #print(mycol.database,mycol.full_name)
             #cursor=colartifacts.find({"References.s3_image_name":{"$exists":1}})
@@ -1052,7 +955,7 @@ def get_artifacts():
     else:
         query_string={"References.s3_image_name":{"$exists":1}}
         #Hardcoding sort to reverse chronological for now
-        sort="TimeStamp.created_at"
+        sort="TimeStamp.uploaded_at"
         order="desc"
         #print(mycol.database,mycol.full_name)
         #cursor=colartifacts.find({"References.s3_image_name":{"$exists":1}})
@@ -1090,9 +993,7 @@ def get_artifacts():
             blob["Name"]=sighting.get("Name")
             blob["Organization"]=sighting.get("Organization","")
             blob["TimeStamp"]=sighting.get("TimeStamp","").split("T")[0]
-            blob["Species"]=sighting.get("Species","")
             blob["Individual"]=sighting.get("Individual","")
-            blob["Sex"]=sighting.get("Sex","")
             sightingcomments=sighting.get("ExpertComments","")
             if sightingcomments!="":
                 blob["CombinedComments"]=sightingcomments+" "+blob.get("ExpertComments","")
