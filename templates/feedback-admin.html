@@ -1,4 +1,4 @@
-{% include 'toolbar-admin.html' %}
+{% include 'toolbar-user.html' %}
 
 {% block header %}
 
@@ -27,13 +27,13 @@
           data-undefined-text=""
           data-page-list="[10, 25, 50, 100, all]"
           data-url="get_feedback_admin"
-          data-height="650">
+          data-height="800">
           <thead>
               <tr>
                   <th data-field="Name" data-width="15" data-width-unit="%" data-halign="center" data-valign="middle" data-editable="false" data-editable-type="text" data-editable-emptytext="Click to Add">Name</th>
                   <th data-field="Email" data-width="15" data-width-unit="%" data-halign="center" data-valign="middle" data-editable="false" data-editable-type="text" data-editable-emptytext="Click to Add">Email</th>
                   <th data-field="Comments" data-width="35" data-width-unit="%" data-halign="center" data-valign="middle" data-height="100" data-editable="false" data-editable-type="text" data-editable-emptytext="Click to Add">Comments</th>
-                  <th data-field="Response" data-width="35" data-width-unit="%" data-halign="center" data-valign="middle" data-editable="true" data-editable-type="text" data-editable-emptytext="Click to Add">Response</th>
+                  <th data-field="Response" data-width="35" data-width-unit="%" data-visible="false" data-halign="center" data-valign="middle" data-editable="true" data-editable-type="text" data-editable-emptytext="Click to Add">Response</th>
                   <th data-field="ID" data-visible="false">ID</th>
               </tr>
           </thead>
