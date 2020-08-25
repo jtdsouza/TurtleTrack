@@ -151,8 +151,7 @@ def get_individuals():
     names=specmaster.get("Individuals",[])
     result=[item["AnimalName"] for item in names]
     print(result)
-    #result=[{"Name":"Jonathan"},{"Name":"Pantera"}]
-    #print(feedback)
+
     return jsonify(result)
 
 #Gets All Species and individuals for nodeled species
@@ -916,36 +915,36 @@ def get_artifacts():
     #print("Params: ",search,sort,order,offset,limit)
 
     if len(search_str)>0:
-        if current_sightings_search!=search_str:
-            current_sightings_search=search_str
-            docIndx={}
-            Alldocs=[]
-            pipeline=[{'$match': {'$text': {'$search': search_str} }},
-            {'$lookup': {'from': 'Artifacts','localField': '_id','foreignField':'Sighting','as':'Artifacts'}}, {
-            '$unwind': {'path': '$Artifacts','includeArrayIndex': 'iArtifact','preserveNullAndEmptyArrays': True}
-            }]
-            temp=colsightings.aggregate(pipeline)
-            for item in temp:
-                doc=item.get("Artifacts","")
-                if doc:
-                    docId=str(doc.get("_id",""))
-                    Alldocs.append(doc)
-                    docIndx[docId]=1
-                    #print("from sightings: ",docId)
-            query_string={"References.s3_image_name":{"$exists":1},"$text": { "$search": search_str } }
-            #Hardcoding sort to reverse chronological for now
-            sort="TimeStamp.uploaded_at"
-            order="desc"
-            #print(mycol.database,mycol.full_name)
-            #cursor=colartifacts.find({"References.s3_image_name":{"$exists":1}})
-            cursor=skiplimit(colartifacts,query_string)
-            for doc in cursor:
+        #if current_sightings_search!=search_str:
+        #    current_sightings_search=search_str
+        docIndx={}
+        Alldocs=[]
+        pipeline=[{'$match': {'$text': {'$search': search_str} }},
+        {'$lookup': {'from': 'Artifacts','localField': '_id','foreignField':'Sighting','as':'Artifacts'}}, {
+        '$unwind': {'path': '$Artifacts','includeArrayIndex': 'iArtifact','preserveNullAndEmptyArrays': True}
+        }]
+        temp=colsightings.aggregate(pipeline)
+        for item in temp:
+            doc=item.get("Artifacts","")
+            if doc:
                 docId=str(doc.get("_id",""))
-                if docId not in docIndx.keys():
-                    Alldocs.append(doc)
-                    docIndx[docId]=1
-                    #print("from artifacts: ",docId)
-            #print(Alldocs)
+                Alldocs.append(doc)
+                docIndx[docId]=1
+                #print("from sightings: ",docId)
+        query_string={"References.s3_image_name":{"$exists":1},"$text": { "$search": search_str } }
+        #Hardcoding sort to reverse chronological for now
+        sort="TimeStamp.uploaded_at"
+        order="desc"
+        #print(mycol.database,mycol.full_name)
+        #cursor=colartifacts.find({"References.s3_image_name":{"$exists":1}})
+        cursor=skiplimit(colartifacts,query_string)
+        for doc in cursor:
+            docId=str(doc.get("_id",""))
+            if docId not in docIndx.keys():
+                Alldocs.append(doc)
+                docIndx[docId]=1
+                #print("from artifacts: ",docId)
+        #print(Alldocs)
         docs=[]
         filtered_artifacts_counter=len(Alldocs)
         upper=min(offset+limit,filtered_artifacts_counter)
