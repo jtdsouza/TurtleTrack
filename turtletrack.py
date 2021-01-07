@@ -12,13 +12,16 @@ from bson.objectid import ObjectId
 from collections import defaultdict
 import json
 from datetime import datetime
+import uuid
+from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient, __version__
 
 app = Flask(__name__)
 
 #COnstants for metadata and object locations
-
-BLOB_BUCKET="turtletrack"
-TEXT_BUCKET="turtletrack"
+AZURE_CONNECT_STRING = 'DefaultEndpointsProtocol=https;AccountName=wtimages01;AccountKey=k3BuXSlMiDyv+7ftWQqAPLKhu1OwIvd8W2/EjEjzVf/D/uSodDmCHp46KnGBFIaEBFpGHKdf5Jn9dxMkSWNqTQ==;EndpointSuffix=core.windows.net'
+AZURE_BLOB_CONTAINER = "turtletrack-dev01"
+#BLOB_BUCKET="turtletrack"
+#TEXT_BUCKET="turtletrack"
 MONGO_DB='TurtleTrack'
 
 #Constants for Inference THRESHOLDS
@@ -27,18 +30,18 @@ USE_DETECTION_CLASSES=False
 FIELD_FACTOR=1.1 #Multiply fielf confidences by this factor
 
 # Constants for IBM COS values
-COS_ENDPOINT = "https://s3.us-east.cloud-object-storage.appdomain.cloud" # Current list avaiable at https://control.cloud-object-storage.cloud.ibm.com/v2/endpoints
-COS_API_KEY_ID = "FlheJLIpK2JOmWxkIPPl6fWAmRP9kfnqfclo7plATiot" # eg "W00YixxxxxxxxxxMB-odB-2ySfTrFBIQQWanc--P3byk"
-COS_RESOURCE_CRN = "crn:v1:bluemix:public:cloud-object-storage:global:a/6c1ba521ec31473c8f469e77c5987bea:3bfa44b7-f7de-4e62-bb5c-a4c9972f92c8::"
-COS_AUTH_ENDPOINT = "https://iam.cloud.ibm.com/identity/token"
+#COS_ENDPOINT = "https://s3.us-east.cloud-object-storage.appdomain.cloud" # Current list avaiable at https://control.cloud-object-storage.cloud.ibm.com/v2/endpoints
+#COS_API_KEY_ID = "FlheJLIpK2JOmWxkIPPl6fWAmRP9kfnqfclo7plATiot" # eg "W00YixxxxxxxxxxMB-odB-2ySfTrFBIQQWanc--P3byk"
+#COS_RESOURCE_CRN = "crn:v1:bluemix:public:cloud-object-storage:global:a/6c1ba521ec31473c8f469e77c5987bea:3bfa44b7-f7de-4e62-bb5c-a4c9972f92c8::"
+#COS_AUTH_ENDPOINT = "https://iam.cloud.ibm.com/identity/token"
 # Create resource
-cos = ibm_boto3.resource("s3",
-    ibm_api_key_id=COS_API_KEY_ID,
-    ibm_service_instance_id=COS_RESOURCE_CRN,
-    ibm_auth_endpoint=COS_AUTH_ENDPOINT,
-    config=Config(signature_version="oauth"),
-    endpoint_url=COS_ENDPOINT
-)
+#cos = ibm_boto3.resource("s3",
+#    ibm_api_key_id=COS_API_KEY_ID,
+#    ibm_service_instance_id=COS_RESOURCE_CRN,
+#    ibm_auth_endpoint=COS_AUTH_ENDPOINT,
+#    config=Config(signature_version="oauth"),
+#    endpoint_url=COS_ENDPOINT
+#)
 
 client = pymongo.MongoClient("mongodb+srv://wildtrackdev:wildtrackai2020!@cluster0-abxwt.azure.mongodb.net/admin?retryWrites=true&w=majority")
 db = client[MONGO_DB]
@@ -101,7 +104,20 @@ def get_item(bucket_name, item_name):
     return image_stream
 
 
-
+#JTD+8 12/2020 Get Azure Blob
+#Retrieve Azure Blob object
+def get_blob(item_name):
+    #print("Retrieving item from bucket: {0}, key: {1}".format(bucket_name, item_name))
+    try:
+        blob = BlobClient.from_connection_string(conn_str=AZURE_CONNECT_STRING, container_name=AZURE_BLOB_CONTAINER, blob_name=item_name)
+        blob_data = blob.download_blob()
+        image_stream=blob_data.readall()
+        #print("File Contents: {0}".format(image_stream))
+    except ClientError as be:
+        print("CLIENT ERROR: {0}\n".format(be))
+    except Exception as e:
+        print("Unable to retrieve file contents: {0}".format(e))
+    return image_stream
 
 
 def Get_Inference(value,confidence,threshold):
@@ -792,7 +808,9 @@ def GetArtifactDetail(artifact):
         print("Issue getting metadata for artifact: ",artifact["_id"])
     else:
         try:
-            image_stream=get_item(BLOB_BUCKET,filename)
+            #image_stream=get_item(BLOB_BUCKET,filename)
+            image_stream=get_blob(filename)
+            
             if len(image_stream)>0:
                 blob["annotated_image"]="<img src=\"data:image/jpeg;base64,"+((base64.b64encode(image_stream)).decode('UTF-8')+
                 "\" class=\"img-fluid img-thumbnail\" alt=\"Annotated images\" loading=\"lazy\" width=\"260\" height=\"260\">")
@@ -1019,7 +1037,8 @@ def GetImageDetails(artifact):
         filename=""
         if References != "":
             filename=References.get("s3_image_name","")
-            image_stream=get_item(BLOB_BUCKET,filename)
+            #image_stream=get_item(BLOB_BUCKET,filename)
+            image_stream=get_blob(filename)
             num_detections=len(artifact.get("Footprint_Detection",""))
 
             blob["image"]="<img src=\"data:image/jpeg;base64,"+((base64.b64encode(image_stream)).decode('UTF-8')+
@@ -1189,6 +1208,100 @@ def add_feedback():
         status="OK"
 
     return json.dumps({'status':status})
+
+def cleanNullTerms(d):
+
+    clean = {}
+    for k, v in d.items():
+        if isinstance(v, dict):
+            nested = cleanNullTerms(v)
+            if len(nested.keys()) > 0:
+                clean[k] = nested
+        elif v != None and v != "":
+            clean[k] = v
+    return clean
+
+@app.route('/add_sighting', methods=['POST'])   
+
+def add_sighting():
+    #try:
+    data=request.values
+    print(data)
+
+
+    #feedback["Images"]=data.get("images","")
+    instance=datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+    #print("Adding feedback",request.values,feedback)
+    # Define MongoDB Sighting collection schema
+    sighting_schema = {
+        'RecorderInfo': {
+            'Name': data.get("name",""),
+            'Email': data.get("email",""),
+            'Organization': 'Piedmont Wildlife Center'},
+        'TimeStamp': {
+            'created_at': instance,
+            'uploaded_at': instance},
+        'Location': {
+            'LocationName': '',
+            'GPS': {}},
+        'UserLabels': {
+            'Species': 'Box Turtle, Eastern',
+            'AnimalName': ''},
+        'References': {
+            'Source': 'Turtle Track'},
+        'Comments': {
+            'UserComments': data.get("notes","")}
+        }
+
+
+
+    # Remove null schema values and post record to MongoDB
+    cleanSightingSchema = cleanNullTerms(sighting_schema)
+    sighting_id = db.Sightings.insert_one(cleanSightingSchema).inserted_id
+    
+    uploaded_files=request.files.getlist('images')
+    print(len(uploaded_files))
+    for image in uploaded_files:
+        #uploaded_file.save(uploaded_file.filename)
+        print(image.filename)
+# Establish IBM COS client and write directly to S3
+        id = uuid.uuid1().hex
+        image_name = "TURTLETRACK/"+id+".jpg"
+        cos.meta.client.upload_fileobj(image,
+                                    Bucket = BLOB_BUCKET,
+                                    Key = image_name)
+
+        artifact_schema = {
+        'ArtifactType': 'turtle shells',
+        'MediaType': 'photo',
+        'Sighting' : sighting_id,
+        'TimeStamp': {
+            'created_at': '',
+            'uploaded_at': ''},
+        'References': {
+            'Source': 'Turtle Track',
+            's3_image_name': image_name}
+        }
+
+        cleanArtifactSchema = cleanNullTerms(artifact_schema)
+        artifact_id = db.Artifacts.insert_one(cleanArtifactSchema)
+
+
+
+
+
+
+        #print(feedbackid)
+    #except:
+    #    print("Error adding feedback")
+    #    status="Error"
+    #else:
+    status="OK"
+
+    return json.dumps({'status':status})
+
+
+
 
 @app.route('/update_image_details', methods=['POST'])    
 def update_image_details():
