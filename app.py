@@ -12,7 +12,7 @@ import json
 from datetime import datetime
 import uuid
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient, __version__
-
+from io import BytesIO
 app = Flask(__name__)
 
 #COnstants for metadata and object locations
@@ -40,6 +40,8 @@ FIELD_FACTOR=1.1 #Multiply fielf confidences by this factor
 #    config=Config(signature_version="oauth"),
 #    endpoint_url=COS_ENDPOINT
 #)
+blob_service_client = BlobServiceClient.from_connection_string(AZURE_CONNECT_STRING)
+container_client = blob_service_client.get_container_client(AZURE_BLOB_CONTAINER)
 
 client = pymongo.MongoClient("mongodb+srv://wildtrackdev:wildtrackai2020!@cluster0-abxwt.azure.mongodb.net/admin?retryWrites=true&w=majority")
 db = client[MONGO_DB]
@@ -1265,12 +1267,17 @@ def add_sighting():
 # Establish IBM COS client and write directly to S3
         id = uuid.uuid1().hex
         image_name = "TURTLETRACK/"+id+".jpg"
-        cos.meta.client.upload_fileobj(image,
-                                    Bucket = BLOB_BUCKET,
-                                    Key = image_name)
-
+        #cos.meta.client.upload_fileobj(image,
+        #                            Bucket = BLOB_BUCKET,
+        #                            Key = image_name)
+        #data=open(image, "rb")
+        img = BytesIO(image.read())        
+        data = Image.open(img, 'r')        
+        buf = BytesIO()        
+        data.save(buf, 'png')   
+        container_client.upload_blob(name=image_name, data=buf.getvalue())
         artifact_schema = {
-        'ArtifactType': 'turtle shells',
+        'ArtifactType': 'Carapace',
         'MediaType': 'photo',
         'Sighting' : sighting_id,
         'TimeStamp': {
@@ -1283,7 +1290,7 @@ def add_sighting():
 
         cleanArtifactSchema = cleanNullTerms(artifact_schema)
         artifact_id = db.Artifacts.insert_one(cleanArtifactSchema)
-
+        print("Artifact: ",artifact_id)
 
 
 
