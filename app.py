@@ -1235,9 +1235,9 @@ def add_sighting():
     # Define MongoDB Sighting collection schema
     sighting_schema = {
         'RecorderInfo': {
-            'Name': data.get("name",""),
-            'Email': data.get("email",""),
-            'Organization': 'Piedmont Wildlife Center'},
+            'Name': data.get("newname",""),
+            'Email': data.get("newemail",""),
+            'Organization': 'DSouza Trackers'},
         'TimeStamp': {
             'created_at': instance,
             'uploaded_at': instance},

@@ -84,18 +84,43 @@
                 </button>
             </div>
             
-
+             
             <div class="modal-body">
                 <form id="NewSightingform" method="POST" enctype="multipart/form-data">
                     <div class="form-group row">
                         <label for="name" class="col-md-2 col-form-label">Name</label>
-                        <div class="col-md-10">
-                            <input type="text" class="form-control" id="name" name="name" placeholder="Name">
-
+                        <div class="col">
+                            <input type="text" class="form-control" id="newname" name="newname" placeholder="Name">         
                         </div>
+                      
+                          <label for="email" class="col-md-2 col-form-label">Email</label>
+                    
+                          <div class="col">
+                              <input type="email" class="form-control" id="newemail" name="newemail" placeholder="Email">
+                              
+                          </div>                       
+                    
+
+
                     </div>
+                    <div class= "form-group row">
+                      <label for = "date" class="col-md-2 col-form-label"> Date of Sighting</label> 
+                        <div class = "col">
+                          <input type="date" class="form-control" id="date" name="date" onblur= "validateDate();" placeholder="mm-dd-yyyy">
+                          <p id = "datePrompt"></p>
+                          </div>
+                      <label for="date" class="col-md-2 col-form-label">Location</label>
+                       <div class="col">
+                           <input type="text" class="form-control" id="place" name="place" onblur= "validatePlace();" placeholder="City, State">
+                           <p id= "placePrompt"></p>              
+                        </div>
+                  </div>
+
+                    
+                    
+                      
                     <div class="form-group row">
-                        <label for="email" class="col-md-2 col-form-label">Images</label>
+                        <label for="images" class="col-md-2 col-form-label">Images</label>
                         <div class="col-md-10">
                             <input type="file" class="form-control" id="images" name="images" accept="image/*" multiple="multiple" onchange="loadFile(event)" capture>
                             <output id="turtles">
@@ -103,13 +128,7 @@
                           </div>                       
                     </div>
 
-                    <div class="form-group row">
-                      <label for="email" class="col-md-2 col-form-label">Email</label>
-                      <div class="col-md-10">
-                          <input type="email" class="form-control" id="email" name="email" placeholder="Email">
-                          
-                      </div>                       
-                  </div>
+                   
 
                     <div class="form-group row">
                         <label for="feedback" class="col-md-2 col-form-label">Additional Notes</label>
@@ -119,6 +138,7 @@
                             rows="6"></textarea>   
                         </div>                       
                     </div>
+                  </div>
                     <div class="form-group row">
                         <div class="offset-md-2 col-md-10">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">
@@ -434,6 +454,27 @@ var loadFile = function(event) {
       }
   div.innerHTML=str
 };
+
+
+function validatePlace() {
+    var place = document.getElementById("place").value;
+    var re4 = /[A-z,][A-z]/;
+
+    if (re4.test(place)) {
+        document.getElementById("placePrompt").style.color = "green";
+        document.getElementById("placePrompt").innerHTML ="<strong>Valid</strong>";
+    }
+    else{
+        document.getElementById("placePrompt").style.color = "red";
+        document.getElementById("placePrompt").innerHTML = "<strong> enter a valid location</strong>";
+    }
+
+
+};
+
+
+
+
 
 </script>
 {% endblock %} 
