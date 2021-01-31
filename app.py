@@ -671,8 +671,11 @@ def GetSightingDetail(sighting):
         Comments=sighting.get("Comments","")
         if Comments !="":
             record["ExpertComments"]=Comments.get("ExpertComments","")
+            record["UserComments"]=Comments.get("UserComments","")
         else:
             record["ExpertComments"]=""
+            record["UserComments"]=""
+
         TimeStamp=sighting.get("TimeStamp","")
         if TimeStamp != "":
             record["TimeStamp"]=TimeStamp.get("uploaded_at","").split("T")[0]
@@ -1230,7 +1233,11 @@ def add_sighting():
 
 
     #feedback["Images"]=data.get("images","")
-    instance=datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+    #instance=datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+    instance=data.get("date")+"T00:00:00Z"
+    #print(formdate,instance)
+    #forminstance=formdate.strftime("%Y-%m-%dT%H:%M:%SZ")
+    #print(forminstance)
     #print("Adding feedback",request.values,feedback)
     # Define MongoDB Sighting collection schema
     sighting_schema = {
