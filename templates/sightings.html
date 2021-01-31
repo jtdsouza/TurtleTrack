@@ -3,7 +3,7 @@
 {% block content %}  
     <div class="container-fluid">
       <div id="toolbar">
-        <button id="newsighting" class="btn btn-secondary">New Sighting</button>
+        <button id="newsighting" class="btn btn-secondary">Report A Sighting</button>
       </div>
     <div class="table-responsive">
 
@@ -78,7 +78,7 @@
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Report a New Sighting</h4>
+                <h4 class="modal-title">Report a Sighting</h4>
                 <button type="button" class="close" data-dismiss="modal">
                     &times;
                 </button>
@@ -88,50 +88,70 @@
             <div class="modal-body">
                 <form id="NewSightingform" method="POST" enctype="multipart/form-data">
                     <div class="form-group row">
-                        <label for="name" class="col-md-2 col-form-label">Name</label>
+                        <label for="name" class="col-md-1 col-form-label">Name</label>
                         <div class="col">
                             <input type="text" class="form-control" id="newname" name="newname" placeholder="Name">         
                         </div>
                       
-                          <label for="email" class="col-md-2 col-form-label">Email</label>
+                          <label for="email" class="col-md-0 col-form-label">Email</label>
                     
                           <div class="col">
                               <input type="email" class="form-control" id="newemail" name="newemail" placeholder="Email">
                               
-                          </div>                       
+                          </div>  
+
+                          <label for="name" class="col-md-0 col-form-label">Organization</label>
+                    
+                          <div class="col">
+                              <input type="text" class="form-control" id="org" name="org" placeholder="Organization">
+                              
+                          </div>  
+                          
+                          
                     
 
 
                     </div>
                     <div class= "form-group row">
-                      <label for = "date" class="col-md-2 col-form-label"> Date of Sighting</label> 
+                      <label for = "date" class="col-md-1 col-form-label;\">Sighting Date</label> 
                         <div class = "col">
                           <input type="date" class="form-control" id="date" name="date" onblur= "validateDate();" placeholder="mm-dd-yyyy">
                           <p id = "datePrompt"></p>
                           </div>
-                      <label for="date" class="col-md-2 col-form-label">Location</label>
-                       <div class="col">
+                        
+                      <label for="date" class="col-md-0 col-form-label">Location</label>
+                       <div class = "col">
                            <input type="text" class="form-control" id="place" name="place" onblur= "validatePlace();" placeholder="City, State">
                            <p id= "placePrompt"></p>              
                         </div>
+
+                        <label for="name" class="col-md-0col-form-label">Turtle Name</label>
+                    
+                          <div class="col">
+                              <input type="text" class="form-control" id="turtlename" name="turtlename" placeholder="Turtle Name (if known)">
+                              
+                          </div>  
+                          
                   </div>
 
                     
                     
                       
                     <div class="form-group row">
-                        <label for="images" class="col-md-2 col-form-label">Images</label>
-                        <div class="col-md-10">
+                        <label for="images" class="col-md-1 col-form-label">Images</label>
+                        <div class="col">
                             <input type="file" class="form-control" id="images" name="images" accept="image/*" multiple="multiple" onchange="loadFile(event)" capture>
                             <output id="turtles">
 
-                          </div>                       
+                          </div>   
+                          
+                          
                     </div>
 
                    
 
                     <div class="form-group row">
-                        <label for="feedback" class="col-md-2 col-form-label">Additional Notes</label>
+                        <label for="feedback" class="col-md-1 col-form-label"> Notes</label>
                         <div class="col-md-10">
                             <textarea class="form-control" id="notes" name="notes" 
                             placeholder="Any additional notes about your observations?" 
@@ -436,21 +456,10 @@ var loadFile = function(event) {
 };
 
 
-function validatePlace() {
-    var place = document.getElementById("place").value;
-    var re4 = /[A-z,][A-z]/;
-
-    if (re4.test(place)) {
-        document.getElementById("placePrompt").style.color = "green";
-        document.getElementById("placePrompt").innerHTML ="<strong>Valid</strong>";
-    }
-    else{
-        document.getElementById("placePrompt").style.color = "red";
-        document.getElementById("placePrompt").innerHTML = "<strong> enter a valid location</strong>";
-    }
 
 
-};
+
+
 
 
 
