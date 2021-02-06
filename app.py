@@ -1308,7 +1308,7 @@ def add_sighting():
     #    print("Error adding feedback")
     #    status="Error"
     #else:
-    status="OK"
+    status="OK "+sighting_id
 
     return json.dumps({'status':status})
 
