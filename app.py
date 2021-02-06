@@ -1244,7 +1244,7 @@ def add_sighting():
         'RecorderInfo': {
             'Name': data.get("newname",""),
             'Email': data.get("newemail",""),
-            'Organization': 'DSouza Trackers'},
+            'Organization': data.get("org","")},
         'TimeStamp': {
             'created_at': instance,
             'uploaded_at': instance},
@@ -1253,7 +1253,7 @@ def add_sighting():
             'GPS': {}},
         'UserLabels': {
             'Species': 'Box Turtle, Eastern',
-            'AnimalName': ''},
+            'AnimalName': data.get("turtlename","")},
         'References': {
             'Source': 'Turtle Track'},
         'Comments': {
