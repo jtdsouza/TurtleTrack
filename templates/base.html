@@ -60,7 +60,7 @@
             </ul>
             <span class="navbar-text">
 
-                  <a role="button" id="newsighting2"> <span class="fab fa-telegram-plane"></span> Report a Sighting .</a>
+                  <a role="button" id="newsighting2" > <span class="fab fa-telegram-plane"></span> Report a Sighting .</a>
                   
             </span>
             <span class="navbar-text">
@@ -193,7 +193,7 @@
                         <div class= "form-group row">
                           <label for = "date" class="col-md-1 col-form-label;\">Date</label> 
                             <div class = "col">
-                              <input type="date" class="form-control" id="date" name="date" onblur= "validateDate();" placeholder="mm-dd-yyyy">
+                              <input type="date" class="form-control" id="date" name="date"  placeholder="mm-dd-yyyy">
                               <p id = "datePrompt"></p>
                               </div>
                             
@@ -218,7 +218,7 @@
                         <div class="form-group row">
                             <label for="images" class="col-md-1 col-form-label">Images</label>
                             <div class="col">
-                                <input type="file" class="form-control" id="images" name="images" accept="image/*" multiple="multiple" onchange="loadFile(event)" capture>
+                                <input type="file" class="form-control" id="images" name="images" accept="image/*" multiple="multiple" onchange="loadFile(event)">
                                 <output id="turtles">
     
                               </div>   
@@ -242,10 +242,15 @@
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">
                                     Cancel
                                 </button>
-                                <button type="submit" class="btn btn-primary" onload = alert  >
+                                <button type="submit" class="btn btn-primary" onclick="loading();" >
                                     Submit
                                 </button>
                             </div>                      
+                        </div>
+                        <div class = "form-group-row">
+                            <div class = "col-md-2">
+                            <p id="save"></p> 
+                            </div> 
                         </div>
                     </form>
                 </div>
@@ -283,6 +288,7 @@
     $("#newsighting2").click(function(){
         $('#NewSightingModal').modal('show')});
 
+
     $('#NewSightingform').on('submit', function(e){
     e.preventDefault();
     var formdata=new FormData(this);
@@ -299,14 +305,17 @@
             console.log("OK");
             $('#NewSightingModal').modal('hide');
             $('#NewSightingform').trigger("reset");
+            location.reload(true);
 
             },
         error:function(error){
 				        console.log(error);
                         $('#NewSightingModal').modal('hide');
+                        location.reload(true);
 			    }
     });
 });
+
 var loadFile = function(event) {
 	var output = document.getElementById('turtles');
   var files=event.target.files
@@ -323,6 +332,16 @@ var loadFile = function(event) {
       }
   div.innerHTML=str
 };
+
+function loading(){
+
+     document.getElementById("save").innerHTML = "Saving, please wait ...";
+}
+
+
+
+
+     
 
 </script>
     
