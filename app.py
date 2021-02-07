@@ -1234,7 +1234,11 @@ def add_sighting():
 
     #feedback["Images"]=data.get("images","")
     #instance=datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
-    instance=data.get("date")+"T00:00:00Z"
+    update=data.get("date","")
+    if update=="":
+        instance=datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+    else:
+        instance=update+"T00:00:00Z"
     #print(formdate,instance)
     #forminstance=formdate.strftime("%Y-%m-%dT%H:%M:%SZ")
     #print(forminstance)
