@@ -1429,3 +1429,28 @@ def update_species_details():
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
+
+
+def delete_sighting(ID):
+    if ID=="":
+        return False
+    else:
+        artifacts=""
+        artifact_list=colartifacts.find({"Sighting":ObjectId(ID)})
+        print(artifact_list)
+        for artifact in artifact_list:
+            #artifact=colartifacts.find_one({"_id":art_ID})
+            art_ID=artifact.get("_id","")
+            ref=artifact.get("References","")
+            if ref!="":
+                blob=ref.get("s3_image_name")
+                print(art_ID,blob)
+                try:
+                    container_client.delete_blob(blob)
+                except:
+                    print("Error deleting Blob: ",blob)
+                    continue
+            colartifacts.delete_one({"_id":ObjectId(art_ID)})
+        colsightings.delete_one({"_id":ObjectId(ID)})
+        return True
+            
