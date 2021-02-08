@@ -51,23 +51,19 @@
             <ul class="navbar-nav mr-auto">
                 {% block navitems %} {% endblock %}
             </ul>
-            <ul class="navbar-nav text-right">
+            <ul class="navbar-nav text-left">
                 {% if sitetype == 'user' %}
                 <li class="nav-item {% if active=='about' %}active{% endif %}"><a class="nav-link" href="/about"><span class="fa fa-atlas fa-lg"></span> About</a></li>
                 {% else %}
                 <li class="nav-item {% if active=='about' %}active{% endif %}"><a class="nav-link" href="/about_admin"><span class="fa fa-atlas fa-lg"></span> About</a></li>
                 {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link" role="button" id="newsighting2" > <span class="fab fa-telegram-plane"></span> Report a Sighting</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" role="button" id="feedback"><span class="fa fa-envelope fa-lg"></span>  Feedback</a>
+                </li>
             </ul>
-            <span class="navbar-text">
-
-                  <a role="button" id="newsighting2" > <span class="fab fa-telegram-plane"></span> Report a Sighting .</a>
-                  
-            </span>
-            <span class="navbar-text">
-        
-                <a role="button" id="feedback"><span class="fa fa-envelope fa-lg"></span>  Feedback</a>
-            </span>
-            
         </div>
 
     </nav>
