@@ -1427,24 +1427,21 @@ def update_species_details():
 
     db.Species.update_one({'_id': ObjectId(ID)}, {'$set': {field: value}})
 
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
 
-
-def delete_sighting(ID):
+def del_sighting(ID):
     if ID=="":
-        return False
+        return 'Error - No ID'
     else:
         artifacts=""
         artifact_list=colartifacts.find({"Sighting":ObjectId(ID)})
-        print(artifact_list)
+        #print(artifact_list)
         for artifact in artifact_list:
             #artifact=colartifacts.find_one({"_id":art_ID})
             art_ID=artifact.get("_id","")
             ref=artifact.get("References","")
             if ref!="":
                 blob=ref.get("s3_image_name")
-                print(art_ID,blob)
+                #print(art_ID,blob)
                 try:
                     container_client.delete_blob(blob)
                 except:
@@ -1452,5 +1449,18 @@ def delete_sighting(ID):
                     continue
             colartifacts.delete_one({"_id":ObjectId(art_ID)})
         colsightings.delete_one({"_id":ObjectId(ID)})
-        return True
-            
+        return 'OK'
+
+
+
+@app.route('/delete_sighting', methods=['POST'])   
+def delete_sighting():
+    data=request.values
+    ID=data.get('ID')
+    status=del_sighting(ID)
+    return json.dumps({'status':status})
+
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0')
+
