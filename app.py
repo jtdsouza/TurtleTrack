@@ -1316,6 +1316,97 @@ def add_sighting():
 
     return json.dumps({'status':status})
 
+@app.route('/add_sighting2', methods=['POST'])   
+
+def add_sighting2():
+    #try:
+    data=request.values
+    print(data)
+    jsondata=request.json
+    print(jsondata)
+    #feedback["Images"]=data.get("images","")
+    #instance=datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+    update=data.get("date","")
+    if update=="":
+        instance=datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+    else:
+        instance=update+"T00:00:00Z"
+    #print(formdate,instance)
+    #forminstance=formdate.strftime("%Y-%m-%dT%H:%M:%SZ")
+    #print(forminstance)
+    #print("Adding feedback",request.values,feedback)
+    # Define MongoDB Sighting collection schema
+    sighting_schema = {
+        'RecorderInfo': {
+            'Name': data.get("newname",""),
+            'Email': data.get("newemail",""),
+            'Organization': data.get("org","")},
+        'TimeStamp': {
+            'created_at': instance,
+            'uploaded_at': instance},
+        'Location': {
+            'LocationName': '',
+            'GPS': {}},
+        'UserLabels': {
+            'Species': 'Box Turtle, Eastern',
+            'AnimalName': data.get("turtlename","")},
+        'References': {
+            'Source': 'Turtle Track'},
+        'Comments': {
+            'UserComments': data.get("notes","")}
+        }
+
+
+
+    # Remove null schema values and post record to MongoDB
+    cleanSightingSchema = cleanNullTerms(sighting_schema)
+    sighting_id = db.Sightings.insert_one(cleanSightingSchema).inserted_id
+    
+    uploaded_files=request.files.getlist('images')
+    print(len(uploaded_files))
+    for image in uploaded_files:
+        #uploaded_file.save(uploaded_file.filename)
+        print(image.filename)
+# Establish IBM COS client and write directly to S3
+        id = uuid.uuid1().hex
+        image_name = "TURTLETRACK/"+id+".jpg"
+        #cos.meta.client.upload_fileobj(image,
+        #                            Bucket = BLOB_BUCKET,
+        #                            Key = image_name)
+        #data=open(image, "rb")
+        img = BytesIO(image.read())        
+        data = Image.open(img, 'r')        
+        buf = BytesIO()        
+        data.save(buf, 'png')   
+        container_client.upload_blob(name=image_name, data=buf.getvalue())
+        artifact_schema = {
+        'ArtifactType': 'Carapace',
+        'MediaType': 'photo',
+        'Sighting' : sighting_id,
+        'TimeStamp': {
+            'created_at': '',
+            'uploaded_at': ''},
+        'References': {
+            'Source': 'Turtle Track',
+            's3_image_name': image_name}
+        }
+
+        cleanArtifactSchema = cleanNullTerms(artifact_schema)
+        artifact_id = db.Artifacts.insert_one(cleanArtifactSchema)
+        print("Artifact: ",artifact_id)
+
+
+
+
+
+        #print(feedbackid)
+    #except:
+    #    print("Error adding feedback")
+    #    status="Error"
+    #else:
+    status="OK "+str(sighting_id)
+
+    return json.dumps({'status':status})
 
 
 
