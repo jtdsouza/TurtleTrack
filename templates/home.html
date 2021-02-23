@@ -188,10 +188,6 @@
 
 {% endblock %}
 
-<button onclick = "getLocation();"> Get Location</button>
-
-<p id = "demo">hello</p>
-
 
 
 
@@ -221,7 +217,7 @@
     
     function showPosition(position) {
         console.log("Showing position")
-      x.innerHTML = "Latitude: " + 
+      document.getElementByID("demo").innerHTML = "Latitude: " + 
       position.coords.latitude + 
       "<br>Longitude: " + 
       position.coords.longitude;
