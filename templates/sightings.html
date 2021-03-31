@@ -3,7 +3,7 @@
 {% block content %}  
     <div class="container-fluid">
       <div id="toolbar">
-        <button id="newsighting" class="btn btn-secondary">Report A Sighting</button>
+        <button id="newsighting" onclick = "getLocation();" class="btn btn-secondary">Report A Sighting</button>
       </div>
     <div class="table-responsive">
 
@@ -276,6 +276,7 @@
           clickToSelect: false,
           events: window.operateEvents,
           formatter: operateFormatter
+          
         },
         {
           title:'ID',
