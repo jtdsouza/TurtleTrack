@@ -39,7 +39,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script> -->
     <!--<script src="Chart.min.js"></script>-->
+
+    {% block header %}{% endblock %}
 </head>
+
 <body>
     
 
@@ -68,7 +71,7 @@
 
     </nav>
 
-    {% block header %}{% endblock %}
+
 
     <div id="feedbackModal" class="modal fade">
         <div class="modal-dialog modal-dialog-centered modal-md">
@@ -201,18 +204,14 @@
                             
                           <label for="date" class="col-md-1 col-form-label">Location</label>
                            <div class = "col-md-3">
-                               <input type="text" class="form-control" id="place" name="place" onblur= "validatePlace();" placeholder="City, State">
-                                           
+                               <input type="text" class="form-control" id="place" name="place"  placeholder="City, State">            
                             </div>
                             
                             <label for = "long/lat" class = col-md-1> Coordinates</label>
-                            <div class = col-md-3>
-                            
+                            <div class = col-md-3>           
                                 <p class = col-md-3 id = "demo"></p>
                             </div>
-    
-                            
-                              
+       
                       </div>
 
 
@@ -261,15 +260,7 @@
                               </div>  
                     </div>
 
-                        
-                               
-                               
-                               
                                    
-
-                               
-                              
-                              
                       
     
                        
@@ -303,13 +294,12 @@
             </div>
         </div>  
     </div>
-
-
-
     
     {% block content %} {% endblock %}
 
+
 <script>
+
     $("#feedback").click(function(){
         $('#feedbackModal').modal('show')});
 
@@ -341,6 +331,7 @@
     $('#NewSightingform').on('submit', function(e){
     e.preventDefault();
     var formdata=new FormData(this);
+    console.log(formdata)
     //data=$('#NewSightingform').serialize();
     //File data
   
@@ -406,12 +397,7 @@ x.innerHTML = "Latitude:" + position.coords.latitude +
 "<br> Longitude:" + position.coords.longitude;
 };
 
-
-
-
-
-
-     
+{% block script %} {% endblock %}
 
 </script>
     

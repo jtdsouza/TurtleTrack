@@ -1,4 +1,4 @@
-{% include 'toolbar-user.html' %}
+{% extends 'toolbar-user.html' %}
 
 {% block content %}  
     <div class="container-fluid">
@@ -78,9 +78,12 @@
 </div>
 
 
+{% endblock %} 
 
 
-<script>
+{% block script %}
+
+
   var $table = $('#table');
   var $artifactTable=$('#artifactTable');
   var $currentsightingtable=$('#currentsightingtable');
@@ -361,9 +364,4 @@
 
 
 
-
-
-
-
-</script>
-{% endblock %} 
+{% endblock %}
