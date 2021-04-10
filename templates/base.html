@@ -196,25 +196,21 @@
                               
                               
                         <div class= "form-group row">
-                          <label for = "date" class="col-md-1 col-form-label;\">Date</label> 
-                            <div class = "col-md-3">
-                              <input type="date" class="form-control" id="date" name="date"  placeholder="mm-dd-yyyy">
-                              <p id = "datePrompt"></p>
-                            </div>
-                            
+                          
                           <label for="date" class="col-md-1 col-form-label">Location</label>
                            <div class = "col-md-3">
-<<<<<<< HEAD
                                <input type="text" class="form-control" id="place" name="place"  placeholder="City, State">
                                            
-=======
-                               <input type="text" class="form-control" id="place" name="place"  placeholder="City, State">            
->>>>>>> 40e4fe759fce39a10d6d3bec2663f5d537902aea
                             </div>
                             
-                            <label for = "long/lat" class = col-md-1> Coordinates</label>
+                            <label for = "long/lat" class = col-md-1> Latitude</label>
                             <div class = col-md-3>           
-                                <p class = col-md-3 id = "demo"></p>
+                                <input class = "form-control" value = "" name = "Latitude" class = "col-md-3"  id = "Latitude"></input>
+                            </div>
+
+                            <label for = "long/lat" class = col-md-1> Longitude</label>
+                            <div class = col-md-3>           
+                                <input class = "form-control" value = "" name = "Longitude" class = "col-md-3"  id = "Longitude"></input>
                             </div>
        
                       </div>
@@ -223,47 +219,78 @@
                     
 
 
-                    <div class = "form-group row">
-                     <label for ="time" class = "col-md-1"> Time</label>
-                      <div class = "col-md-3">
-                        <input type= "time" id = "time" class = "form-control" placeholder = "select time">
+                        <div class = "form-group row">
+                        <label for ="time" class = "col-md-1"> Time</label>
+                            <div class = "col-md-3">
+                                <input type= "time" id = "time" name = "time" class = "form-control" placeholder = "select time">
+                            </div>
+
+                            <label  for = "turtle" class="col-md-1 col-form-label">Turtle ID </label>
+                            <div class= "col-md-3">
+                                <input type="text" class="form-control" id="turtlename" name="turtlename" placeholder="Turtle ID (if applicable)">
+                                    
+                            </div> 
+
+                            <label for = "sex" class = "col-md-1"> Sex </label>
+                            <div class = "col-md-3">
+                                <div class = "form-check form-check-inline">
+                                    <input class = "form-check form-check-inline" type = "radio" id = "male" name = "gender" value = "male">
+                                    <label class = "form-check form-check-inline" for = "male">M</label>
+                                </div>
+                                <div class = "form-check form-check-inline">
+                                    <input class = "form-check form-check-inline" type = "radio" id = "female" name = "gender" value = "female">
+                                    <label class = "form-check form-check-inline" for = "female">F</label>
+                                </div>
+                                <div class = "form-check form-check-inline">
+                                    <input class = "form-check form-check-inline" type = "radio" id = "unknown" name = "gender" value = "unknown">
+                                    <label class = "form-check form-check-inline" for = "unknown">U</label>
+                                </div>
+                                        
+                                
+                            </div>
                         </div>
 
-                      <label  for = "turtle" class="col-md-1 col-form-label">Turtle ID </label>
-                      <div class= "col-md-3">
-                      <input type="text" class="form-control" id="turtlename" name="turtlename" placeholder="Turtle ID (if applicable)">
+
+                        <div class = "form-group row">
+
+                            <label for = "date" class="col-md-1 col-form-label;\">Date</label> 
+                            <div class = "col-md-3">
+                              <input type="date" class="form-control" id="date" name="date"  placeholder="mm-dd-yyyy">
+                              <p id = "datePrompt"></p>
+                            </div>
+
+              
+                            <label for = "sex" class = "col-md-1">  </label>
+                            <div class = "col-md-3">
+                                <div class = "form-check form-check-inline">
+                                    <input class = "form-check form-check-inline" type = "radio" id = "captivity" name = "status" value = "captivity">
+                                    <label class = "form-check form-check-inline" for = "male">Captive</label>
+                                </div>
+                                <div class = "form-check form-check-inline">
+                                    <input class = "form-check form-check-inline" type = "radio" id = "wild" name = "status" value = "wild">
+                                    <label class = "form-check form-check-inline" for = "female">Wild</label>
+                                </div>
+                        
                                 
-                              </div> 
+                            </div>
 
-                       <label for = "sex" class = "col-md-1"> Sex </label>
-                       <div class = "col-md-3">
-                         <form action = "action-page-php">
-                            <select name = "gender">
-                                <option value = "male"> Male</option>
-                                <option value = "male"> Female</option>
-                                <option value = "unknown"> Unknown</option>
-                                          
-                                      </select>
-                                  </form>
-                              </div>
-                    </div>
-                       
 
-                              
-
-                           
-
-                      
+                    
+                        </div>
+               
+                    
                         
                         
                           
-                    <div class="form-group row">
+                        <div class="form-group row">
                             <label for="images" class="col-md-1 col-form-label">Images</label>
                             <div class="col-md-4">
                                 <input type="file" class="form-control" id="images" name="images" accept="image/*" multiple="multiple" onchange="loadFile(event)">
                                 <output id="turtles">
-                              </div>  
-                    </div>
+                            </div>  
+                        </div>
+
+                       
 
                                    
                       
@@ -289,13 +316,17 @@
                                 </button>
                             </div>                      
                         </div>
+
                         <div class = "form-group-row">
                             <div class = "col-md-2">
-                            <p id="save"></p> 
+                                <p id="save"></p> 
                             </div> 
                         </div>
+
                     </form>
+
                 </div>
+
             </div>
         </div>  
     </div>
@@ -387,7 +418,7 @@ function loading(){
 
 
 function getLocation(){
-    var x = document.getElementById ("demo");
+    var x = document.getElementById ("coordinates");
 
     if (navigator.geolocation){
         navigator.geolocation.getCurrentPosition(showPosition);
@@ -397,9 +428,8 @@ function getLocation(){
 };
 
 function showPosition(position){
-var x = document.getElementById ("demo");
-x.innerHTML = "Latitude:" + position.coords.latitude +
-"<br> Longitude:" + position.coords.longitude;
+document.getElementById("Latitude").value = position.coords.latitude;
+document.getElementById("Longitude").value =  position.coords.longitude;
 };
 
 {% block script %} {% endblock %}
