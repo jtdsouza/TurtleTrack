@@ -404,6 +404,7 @@ var loadFile = function(event) {
           continue;
           
           str = str+"<img src='" + URL.createObjectURL(event.target.files[i]) + "' class='img-fluid img-thumbnail' style='width: 200px' />";
+          str=str+"<a class='remove-image' href='#' style='display: inline;'>&#215;</a>"
           output.insertBefore(div, null);
       }
   div.innerHTML=str
