@@ -1228,6 +1228,9 @@ def cleanNullTerms(d):
 
 def add_sighting():
     #try:
+    male=["MALE","M"]
+    female=["FEMALE","F"]
+    unknown=["U","UNK","UU","UNKNOWN"]
     data=request.values
     print(data)
 
@@ -1235,10 +1238,38 @@ def add_sighting():
     #feedback["Images"]=data.get("images","")
     #instance=datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
     update=data.get("date","")
+    uptime=data.get("time","")
+    try:
+        if len(uptime)>0:
+            uptime=datetime.strptime(uptime, '%I:%M')
+        if len(update)>0:
+            update=datetime.strptime(update, '%Y-%m-%d')
+    except:
+        update=""
+        uptime=""
     if update=="":
-        instance=datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+        if uptime=="":
+            instance=datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+        else:
+            instance = datetime.now().strftime("%Y-%m-%dT")+uptime.strftime("%H:%M:%SZ")
     else:
-        instance=update+"T00:00:00Z"
+        if uptime=="":
+            instance=update.strftime("%Y-%m-%dT")+datetime.now().strftime("%H:%M:%SZ")
+        else:
+            instance=update.strftime("%Y-%m-%dT")+uptime.strftime("%H:%M:%SZ")
+    #print("INSTANCE: ",instance)
+    sex=data.get("gender","")
+    if sex.upper() in male:
+        sex="M"
+    elif sex.upper() in female:
+        sex="F"
+    elif sex.upper() in unknown:
+        sex="U"
+    else:
+        sex=""
+
+
+
     #print(formdate,instance)
     #forminstance=formdate.strftime("%Y-%m-%dT%H:%M:%SZ")
     #print(forminstance)
@@ -1251,13 +1282,17 @@ def add_sighting():
             'Organization': data.get("org","")},
         'TimeStamp': {
             'created_at': instance,
-            'uploaded_at': instance},
+            'uploaded_at': datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")},
         'Location': {
-            'LocationName': '',
-            'GPS': {}},
+            'LocationName': data.get('place',""),
+            'latitude': data.get("Latitude",""),
+            'longitude': data.get("Longitude","")
+        },
         'UserLabels': {
             'Species': 'Box Turtle, Eastern',
-            'AnimalName': data.get("turtlename","")},
+            'AnimalName': data.get("turtlename",""),
+            'Sex':sex,
+            'CaptiveWild': data.get("status","")},
         'References': {
             'Source': 'Turtle Track'},
         'Comments': {
@@ -1267,41 +1302,46 @@ def add_sighting():
 
 
     # Remove null schema values and post record to MongoDB
+    #print("UNCLEAN: ",sighting_schema)
     cleanSightingSchema = cleanNullTerms(sighting_schema)
+    #print("CLEAN: ",cleanSightingSchema)
     sighting_id = db.Sightings.insert_one(cleanSightingSchema).inserted_id
     
     uploaded_files=request.files.getlist('images')
-    print(len(uploaded_files))
+    #print(len(uploaded_files))
     for image in uploaded_files:
+        try:
         #uploaded_file.save(uploaded_file.filename)
-        print(image.filename)
-# Establish IBM COS client and write directly to S3
-        id = uuid.uuid1().hex
-        image_name = "TURTLETRACK/"+id+".jpg"
-        #cos.meta.client.upload_fileobj(image,
-        #                            Bucket = BLOB_BUCKET,
-        #                            Key = image_name)
-        #data=open(image, "rb")
-        img = BytesIO(image.read())        
-        data = Image.open(img, 'r')        
-        buf = BytesIO()        
-        data.save(buf, 'png')   
-        container_client.upload_blob(name=image_name, data=buf.getvalue())
-        artifact_schema = {
-        'ArtifactType': 'Carapace',
-        'MediaType': 'photo',
-        'Sighting' : sighting_id,
-        'TimeStamp': {
-            'created_at': '',
-            'uploaded_at': ''},
-        'References': {
-            'Source': 'Turtle Track',
-            's3_image_name': image_name}
-        }
+            #print(image.filename)
+    # Establish IBM COS client and write directly to S3
+            id = uuid.uuid1().hex
+            image_name = "TURTLETRACK/"+id+".jpg"
+            #cos.meta.client.upload_fileobj(image,
+            #                            Bucket = BLOB_BUCKET,
+            #                            Key = image_name)
+            #data=open(image, "rb")
+            img = BytesIO(image.read())        
+            data = Image.open(img, 'r')        
+            buf = BytesIO()        
+            data.save(buf, 'png')   
+            container_client.upload_blob(name=image_name, data=buf.getvalue())
+            artifact_schema = {
+            'ArtifactType': 'Carapace',
+            'MediaType': 'photo',
+            'Sighting' : sighting_id,
+            'TimeStamp': {
+                'created_at': instance,
+                'uploaded_at': datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")},
+            'References': {
+                'Source': 'Turtle Track',
+                's3_image_name': image_name}
+            }
 
-        cleanArtifactSchema = cleanNullTerms(artifact_schema)
-        artifact_id = db.Artifacts.insert_one(cleanArtifactSchema)
-        print("Artifact: ",artifact_id)
+            cleanArtifactSchema = cleanNullTerms(artifact_schema)
+            artifact_id = db.Artifacts.insert_one(cleanArtifactSchema)
+            #print("Artifact: ",artifact_id)
+        except:
+            print("Error processing new image")
 
 
 
