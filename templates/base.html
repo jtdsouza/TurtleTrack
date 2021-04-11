@@ -285,9 +285,17 @@
                         <div class="form-group row">
                             <label for="images" class="col-md-1 col-form-label">Images</label>
                             <div class="col-md-4">
-                                <input type="file" class="form-control" id="images" name="images" accept="image/*" multiple="multiple" onchange="loadFile(event)">
+                                <input type="file" class="form-control" id="images" name="images" accept="image/*" multiple="multiple" onchange="loadFile(event)">      
+                            </div> 
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="images" class="col-md-1 col-form-label"></label>
+                            <div class="col-md-11">
                                 <output id="turtles">
-                            </div>  
+
+                                </output>
+                            </div>
                         </div>
 
                        
@@ -402,12 +410,27 @@ var loadFile = function(event) {
         //Only pics
         if (!file.type.match('image'))
           continue;
-          
+          if (i==0)
+            str=str+"<div class='row'>";
+          else if (i%4==0)
+            str=str+"</div><div class='row'>"
+          str=str+"<div id='content_"+i+"' class='col-md-3' style='position: relative'>"    
           str = str+"<img src='" + URL.createObjectURL(event.target.files[i]) + "' class='img-fluid img-thumbnail' style='width: 200px' />";
-          str=str+"<a class='remove-image' href='#' style='display: inline;'>&#215;</a>"
+          str=str+"<i onclick='img_delete("+i+")' class='fa fa-minus-circle' style='position: absolute; top: 4px; right: 5px'></i>"
+          //str=str+"<a class='remove-image' href='#' style='position: absolute; top: 4px; right: 5px'>&#215;</a>"
+          str=str+"</div>"
           output.insertBefore(div, null);
       }
+  str=str+"</div>"
   div.innerHTML=str
+};
+
+function img_delete(i) {
+    id="content_"+i;
+    #console.log(id);
+    var todel=document.getElementById(id);
+    todel.remove();
+
 };
 
 function loading(){
