@@ -612,7 +612,7 @@ def index(sitetype="user"):
     
     
     if sitetype=="user":
-        template="home-user.html"
+        template="home.html"
     else:
         template="home-admin.html"
 

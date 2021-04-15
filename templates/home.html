@@ -1,3 +1,5 @@
+{% extends 'base.html' %}
+
 {% block header %}
 <header class="jumbotron">
         <div class="container-fluid">
@@ -70,7 +72,7 @@
                 </div>
             </div>
         </div>
-    </header>
+</header>
 {% endblock %}
 
 {% block content %}   
@@ -112,17 +114,9 @@
                    
                     <a href="/sightings_page" class="btn btn-lg btn-block btn-outline-secondary" role="button">Details</a>
                   </div>
-                  
                 </div>
-
-                
-</html>
-
-
-                
-
+            </div>
         </div>
-
        
        
         <div class="row row-content align-items-center">
@@ -201,41 +195,9 @@
 
 {% endblock %}
 
+{% block navitems %} 
+    <li class="nav-item {% if active=='home' %}active{% endif %}"><a class="nav-link" href="/"><span class="fa fa-home fa-lg"></span> TurtleTrack</a></li>
+    <li class="nav-item {% if active=='observations' %}active{% endif %}"><a class="nav-link" href="/sightings_page"><span class="fa fa-eye fa-lg"></span> Observations</a></li>
+{% endblock %}
 
 
-
-
-
-</script>
-<script type = "text/javascript">
-
-
-
-
-
-
-    function getLocation() {
-        var x = document.getElementById("demo")
-        console.log(x)
-      if (navigator.geolocation) {
-        console.log("Can get location")
-        navigator.geolocation.getCurrentPosition
-        (showPosition);
-        console.log("Got Location")
-      } else { 
-        console.log("Did not get location")
-        x.innerHTML = "Geolocation is not supported by this browser.";
-      } 
-    }
-    
-    function showPosition(position) {
-        console.log("Showing position")
-      document.getElementByID("demo").innerHTML = "Latitude: " + 
-      position.coords.latitude + 
-      "<br>Longitude: " + 
-      position.coords.longitude;
-    }
-    
-        
-        </script>
-    

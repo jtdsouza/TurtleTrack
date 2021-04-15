@@ -424,19 +424,14 @@ function loading(){
 
 
 
-function getLocation(){
-    var x = document.getElementById ("coordinates");
 
-    if (navigator.geolocation){
-        navigator.geolocation.getCurrentPosition(showPosition);
-    } else{
-        x.innerHTML = "Geolocation is not supported by this browser";
-    }
-};
 
 function showPosition(position){
     var latitude = position.coords.latitude;
     var longitude = position.coords.longitude;
+    console.log("Showinig position");
+    console.log(latitude);
+    console.log(longitude);
     document.getElementById("Latitude").value = latitude;
     document.getElementById("Longitude").value =  longitude;
     
@@ -484,6 +479,18 @@ function showPosition(position){
     request.send();  // make the request
                                 
 
+};
+
+
+function getLocation(){
+    var x = document.getElementById ("coordinates");
+    console.log("Getting location")
+    if (navigator.geolocation){
+        navigator.geolocation.getCurrentPosition(showPosition);
+        console.log("Got location")
+    } else{
+        x.innerHTML = "Geolocation is not supported by this browser";
+    }
 };
 
 {% block script %} {% endblock %}
