@@ -140,19 +140,19 @@
           title: 'Source',
           field: 'Source',
           align: 'center',
-          visible:'true',
+          visible: 'true',
           valign: 'middle'
         },{
           title: 'Comments',
           field: 'UserComments',
           align: 'center',
-          visible:'false',
+          visible: 'false',
           valign: 'middle'
         },{
           title: 'ID',
           field: 'ID',
           align: 'center',
-          visible:'false',
+          visible: 'false',
           valign: 'middle'
         }
       ],
@@ -226,6 +226,7 @@
           title: 'Organization',
           field: 'Organization',
           align: 'center',
+          visible: false,
           valign: 'middle'
           
         },
@@ -235,12 +236,25 @@
           field: 'Name',
           align: 'center',
           valign: 'middle'
-        }, 
-        {
+        },{
+          title: 'Email',
+          fielf: 'Email',
+          align: 'center',
+          visible: false,
+          valign: 'middle'
+          
+        },{
           title: 'Date',
           field: 'TimeStamp',
           align: 'center',
           valign: 'middle',
+        }, {
+          title: 'Time',
+          fielf: 'Time',
+          align: 'center',
+          visible: false,
+          valign: 'middle'
+          
         }, {
           title: 'Individual',
           field: 'Individual',
@@ -252,13 +266,48 @@
           field: 'Individual_Inference',
           align: 'center',
           valign: 'middle',
-          visible: true
+          visible: false
+        },{
+          title: 'Sex',
+          fielf: 'Sex',
+          align: 'center',
+          visible: true,
+          valign: 'middle'
+          
         },  {
           title: 'Images',
           field: 'Images',
           align: 'center',
           valign: 'middle',
           formatter:"ModalLinkFormatter"
+        },{
+          title: 'Latitude',
+          fielf: 'Latitude',
+          align: 'center',
+          visible: true,
+          valign: 'middle'
+          
+        },{
+          title: 'Longitude',
+          fielf: 'Longitude',
+          align: 'center',
+          visible: true,
+          valign: 'middle'
+          
+        },{
+          title: 'Location',
+          fielf: 'Location',
+          align: 'center',
+          visible: true,
+          valign: 'middle'
+          
+        },{
+          title: 'Status',
+          fielf: 'Status',
+          align: 'center',
+          visible: false,
+          valign: 'middle'
+          
         },{
           title: 'Comments',
           field: 'UserComments',
@@ -275,6 +324,7 @@
         }, {
           field: 'delete',
           title: 'Delete',
+          visible: false,
           align: 'center',
           clickToSelect: false,
           events: window.operateEvents,
