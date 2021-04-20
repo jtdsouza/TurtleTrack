@@ -665,6 +665,7 @@ def GetSightingDetail(sighting):
         if RecorderInfo != "":
             record["Name"]=RecorderInfo.get("Name","")
             record["Organization"]=RecorderInfo.get("Organization","")
+            record["Email"]=RecorderInfo.get("Email", "")
             #**JTD Leaving in here from when we had data filing to wrong field name
             if record["Organization"]=="":
                 record["Organization"]=RecorderInfo.get("Organization","")
@@ -676,9 +677,23 @@ def GetSightingDetail(sighting):
             record["ExpertComments"]=""
             record["UserComments"]=""
 
+        PlaceStamp=sighting.get("Location","")
+        if PlaceStamp != "":
+            record["Latitude"]=PlaceStamp.get("latitude", "")
+            record["Longitude"]=PlaceStamp.get("longitude","")
+            record["Location"]=PlaceStamp.get("LocationName","")
+
+        UserLabels=sighting.get("UserLabels","")
+        if UserLabels!="":
+            record["Status"]=UserLabels.get("CaptiveWild")
+
+        
+
+
         TimeStamp=sighting.get("TimeStamp","")
         if TimeStamp != "":
-            record["TimeStamp"]=TimeStamp.get("uploaded_at","").split("T")[0]
+            record["TimeStamp"]=TimeStamp.get("created_at","").split("T")[0]
+            record["Time"]=TimeStamp.get("created_at","").split("T")
         ExpertLabels=sighting.get("ExpertLabels","")
         if ExpertLabels != "":
             record["Species"]=ExpertLabels.get("Species","")
@@ -739,7 +754,7 @@ def get_sightings():
     #print("Params: ",search_str,sort,order,offset,limit)
 
     #Hardcode sort to reverse chronological for now
-    sort="TimeStamp.uploaded_at"
+    sort="TimeStamp.created_at"
     order="desc"
 
     #print(mycol.database,mycol.full_name)
