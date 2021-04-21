@@ -1,4 +1,4 @@
-{% extends 'toolbar-user.html' %}
+{% extends 'base.html' %}
 
 {% block content %}  
     <div class="container-fluid">
@@ -88,6 +88,306 @@
   var $artifactTable=$('#artifactTable');
   var $currentsightingtable=$('#currentsightingtable');
   
+
+  var userpopupcolumns=[
+  {
+    title: 'Organization',
+    field: 'Organization',
+    align: 'center',
+    valign: 'middle'
+  },
+  {
+    title: 'Name',
+    field: 'Name',
+    align: 'center',
+    valign: 'middle'
+  }, 
+  {
+    title: 'Date',
+    field: 'TimeStamp',
+    align: 'center',
+    valign: 'middle',
+  }, {
+    title: 'Individual',
+    field: 'Individual',
+    align: 'center',
+    valign: 'middle'
+  }, {
+    title: 'Predicted Individual',
+    field: 'Individual_Inference',
+    align: 'center',
+    valign: 'middle',
+  }, {
+    title: 'Source',
+    field: 'Source',
+    align: 'center',
+    visible: 'true',
+    valign: 'middle'
+  },{
+    title: 'Comments',
+    field: 'UserComments',
+    align: 'center',
+    visible: 'false',
+    valign: 'middle'
+  },{
+    title: 'ID',
+    field: 'ID',
+    align: 'center',
+    visible: 'false',
+    valign: 'middle'
+  }
+];
+
+
+
+var usercolumns= [
+{
+  title: 'Organization',
+  field: 'Organization',
+  align: 'center',
+  visible: false,
+  valign: 'middle'
+  
+},
+{
+
+  title: 'Name',
+  field: 'Name',
+  align: 'center',
+  valign: 'middle'
+},{
+  title: 'Email',
+  field: 'Email',
+  align: 'center',
+  visible: false,
+  valign: 'middle'
+  
+},{
+  title: 'Date',
+  field: 'TimeStamp',
+  align: 'center',
+  valign: 'middle',
+}, {
+  title: 'Time',
+  field: 'Time',
+  align: 'center',
+  visible: false,
+  valign: 'middle'
+  
+}, {
+  title: 'Individual',
+  field: 'Individual',
+  align: 'center',
+  valign: 'middle',
+  visible: true
+}, {
+  title: 'Matched Individual',
+  field: 'Individual_Inference',
+  align: 'center',
+  valign: 'middle',
+  visible: false
+}, {
+  title: 'Images',
+  field: 'Images',
+  align: 'center',
+  valign: 'middle',
+  formatter:"ModalLinkFormatter"
+},{
+  title: 'Latitude',
+  field: 'Latitude',
+  align: 'center',
+  visible: true,
+  valign: 'middle'
+  
+},{
+  title: 'Longitude',
+  field: 'Longitude',
+  align: 'center',
+  visible: true,
+  valign: 'middle'
+  
+},{
+  title: 'Location',
+  field: 'Location',
+  align: 'center',
+  visible: true,
+  valign: 'middle'
+  
+},{
+  title: 'Status',
+  field: 'Status',
+  align: 'center',
+  visible: false,
+  valign: 'middle'
+  
+},{
+  title: 'Comments',
+  field: 'UserComments',
+  align: 'center',
+  visible: true,
+  valign: 'middle'
+},
+{
+  title: 'Source',
+  field: 'Source',
+  align: 'center',
+  visible: false,
+  valign: 'middle'
+}, 
+{
+  title:'ID',
+  field: 'ID',
+  visible: false
+}, 
+
+];
+
+
+var admincolumns= [
+{
+title: 'Organization',
+field: 'Organization',
+align: 'center',
+visible: false,
+valign: 'middle',
+editable: {type:"text",
+          emptytext:"Click to edit",
+          title:"Organization"}
+
+},
+{
+title: 'Name',
+field: 'Name',
+align: 'center',
+valign: 'middle',
+editable: {type:"text",
+emptytext:"Click to edit",
+title:"Name"}
+},
+{
+title: 'Email',
+field: 'Email',
+align: 'center',
+visible: false,
+valign: 'middle',
+editable: {type:"text",
+emptytext:"Click to edit",
+title:"Email"}
+},
+{
+title: 'Date',
+field: 'TimeStamp',
+align: 'center',
+valign: 'middle',
+}, 
+{
+title: 'Time',
+field: 'Time',
+align: 'center',
+visible: false,
+valign: 'middle'
+
+}, {
+title: 'Individual',
+field: 'Individual',
+align: 'center',
+valign: 'middle',
+visible: true,
+editable: {type:"text",
+emptytext:"Click to edit",
+title:"Individual"}
+}, 
+{
+title: 'Matched Individual',
+field: 'Individual_Inference',
+align: 'center',
+valign: 'middle',
+visible: false
+}, 
+{
+title: 'Images',
+field: 'Images',
+align: 'center',
+valign: 'middle',
+formatter:"ModalLinkFormatter"
+},
+{
+title: 'Latitude',
+field: 'Latitude',
+align: 'center',
+visible: true,
+valign: 'middle',
+editable: {type:"text",
+emptytext:"Click to edit",
+title:"Latitude"}
+},
+{
+title: 'Longitude',
+field: 'Longitude',
+align: 'center',
+visible: true,
+valign: 'middle',
+editable: {type:"text",
+emptytext:"Click to edit",
+title:"Longitude"}
+},
+{
+title: 'Location',
+field: 'Location',
+align: 'center',
+visible: true,
+valign: 'middle',
+editable: {type:"text",
+emptytext:"Click to edit",
+title:"Location"}
+},
+{
+title: 'Status',
+field: 'Status',
+align: 'center',
+visible: false,
+valign: 'middle',
+editable: {type:"text",
+emptytext:"Click to edit",
+title:"Status"}
+},{
+title: 'Comments',
+field: 'UserComments',
+align: 'center',
+visible: true,
+valign: 'middle'
+},{
+title: 'PWC Comments',
+field: 'ExpertComments',
+align: 'center',
+valign: 'middle',
+editable: {type:"text",
+        emptytext:"Click to edit",
+        title:"PWC Comments"}
+},{
+title: 'Source',
+field: 'Source',
+align: 'center',
+visible: false,
+valign: 'middle'
+},
+{
+title:'ID',
+field: 'ID',
+visible: false
+}, 
+{
+field: 'delete',
+title: 'Delete',
+visible: true,
+align: 'center',
+clickToSelect: false,
+events: window.operateEvents,
+formatter: operateFormatter
+}
+];
+
+
   function ModalLinkFormatter(value, row, index) {
     //console.log(row)
     //var linktext='<a href=\"javascript:void(0)\" onclick=\"launchModal(\''+JSON.stringify(row)+'\')\">'+value+'</a>'
@@ -107,6 +407,7 @@
     //var detail_url='get_details'
     console.log(detail_url)
     console.log(current_sighting)
+
     $("#currentsightingtable").bootstrapTable('destroy').bootstrapTable({
       columns: [
         {
@@ -216,125 +517,18 @@
       //location.reload(true);
     }
   };
-
+ 
   function initTable() {
+    var sightingcolumns=usercolumns;
+    if ('{{sitetype}}'=='admin') {
+      sightingcolumns=admincolumns;
+    };
     $table.bootstrapTable('destroy').bootstrapTable({
       height: 650,
       locale:"en-US",
-      columns: [
-        {
-          title: 'Organization',
-          field: 'Organization',
-          align: 'center',
-          visible: false,
-          valign: 'middle'
-          
-        },
-        {
-        
-          title: 'Name',
-          field: 'Name',
-          align: 'center',
-          valign: 'middle'
-        },{
-          title: 'Email',
-          field: 'Email',
-          align: 'center',
-          visible: false,
-          valign: 'middle'
-          
-        },{
-          title: 'Date',
-          field: 'TimeStamp',
-          align: 'center',
-          valign: 'middle',
-        }, {
-          title: 'Time',
-          field: 'Time',
-          align: 'center',
-          visible: false,
-          valign: 'middle'
-          
-        }, {
-          title: 'Individual',
-          field: 'Individual',
-          align: 'center',
-          valign: 'middle',
-          visible: true
-        }, {
-          title: 'Matched Individual',
-          field: 'Individual_Inference',
-          align: 'center',
-          valign: 'middle',
-          visible: false
-        }, {
-          title: 'Images',
-          field: 'Images',
-          align: 'center',
-          valign: 'middle',
-          formatter:"ModalLinkFormatter"
-        },{
-          title: 'Latitude',
-          field: 'Latitude',
-          align: 'center',
-          visible: true,
-          valign: 'middle'
-          
-        },{
-          title: 'Longitude',
-          field: 'Longitude',
-          align: 'center',
-          visible: true,
-          valign: 'middle'
-          
-        },{
-          title: 'Location',
-          field: 'Location',
-          align: 'center',
-          visible: true,
-          valign: 'middle'
-          
-        },{
-          title: 'Status',
-          field: 'Status',
-          align: 'center',
-          visible: false,
-          valign: 'middle'
-          
-        },{
-          title: 'Comments',
-          field: 'UserComments',
-          align: 'center',
-          visible: true,
-          valign: 'middle'
-        },
-        {
-          title: 'Source',
-          field: 'Source',
-          align: 'center',
-          visible: false,
-          valign: 'middle'
-        }, {
-          field: 'delete',
-          title: 'Delete',
-          visible: false,
-          align: 'center',
-          clickToSelect: false,
-          events: window.operateEvents,
-          formatter: operateFormatter
-          
-        },
-        {
-          title:'ID',
-          field: 'ID',
-          visible: false
-        }, 
-
-        
-
-      ]
+      columns: sightingcolumns
     });
-  }
+  };
 
 
   $(function() {

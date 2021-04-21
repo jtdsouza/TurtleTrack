@@ -1,4 +1,5 @@
 from flask import Flask,render_template,jsonify,request
+from flask_basicauth import BasicAuth
 import dns
 import pymongo
 import pprint
@@ -14,6 +15,9 @@ import uuid
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient, __version__
 from io import BytesIO
 app = Flask(__name__)
+app.config['BASIC_AUTH_USERNAME'] = 'turtletrekker'
+app.config['BASIC_AUTH_PASSWORD'] = 'turtletrekker'
+basic_auth = BasicAuth(app)
 
 #COnstants for metadata and object locations
 AZURE_CONNECT_STRING = 'DefaultEndpointsProtocol=https;AccountName=wtimages01;AccountKey=k3BuXSlMiDyv+7ftWQqAPLKhu1OwIvd8W2/EjEjzVf/D/uSodDmCHp46KnGBFIaEBFpGHKdf5Jn9dxMkSWNqTQ==;EndpointSuffix=core.windows.net'
@@ -192,6 +196,7 @@ def get_masterlists():
 
 
 @app.route('/feedback_admin_page')
+@basic_auth.required
 def feedback_admin_page():
     return render_template("feedback-admin.html",sitetype="admin")
 
@@ -608,13 +613,7 @@ def index(sitetype="user"):
 
 
 
-
-    
-    
-    if sitetype=="user":
-        template="home.html"
-    else:
-        template="home-admin.html"
+    template="home.html"
 
     return render_template(template, num_images=artifact_count, num_training_images=trained_artifact_count,
             num_species_all=all_species_count,num_species=modeled_species_count,num_contributors=contributor_count,
@@ -632,6 +631,7 @@ def home():
 
 
 @app.route('/admin')
+@basic_auth.required
 def home_admin():
     #print("admin")
     result=index("admin")
@@ -652,8 +652,9 @@ def sightings_page():
     return render_template("sightings.html", last_model_refresh=last_model_refresh,active="observations",sitetype="user")
 
 @app.route('/sightings_admin_page')
+@basic_auth.required
 def sightings_admin_page():
-    return render_template("sightings-admin.html", last_model_refresh=last_model_refresh, active="observations",sitetype="admin")
+    return render_template("sightings.html", last_model_refresh=last_model_refresh, active="observations",sitetype="admin")
 
 def GetSightingDetail(sighting):
     record={}

@@ -53,6 +53,13 @@
         <div class="collapse navbar-collapse" id="Navbar">    
             <ul class="navbar-nav mr-auto">
                 {% block navitems %} {% endblock %}
+                {% if sitetype == 'user' %}
+                <li class="nav-item {% if active=='home' %}active{% endif %}"><a class="nav-link" href="/"><span class="fa fa-home fa-lg"></span> TurtleTrack</a></li>
+                <li class="nav-item {% if active=='observations' %}active{% endif %}"><a class="nav-link" href="/sightings_page"><span class="fa fa-eye fa-lg"></span> Observations</a></li>
+                {% else %}
+                <li class="nav-item {% if active=='home' %}active{% endif %}"><a class="nav-link" href="/admin"><span class="fa fa-home fa-lg"></span> TurtleTrack</a></li>
+                <li class="nav-item {% if active=='observations' %}active{% endif %}"><a class="nav-link" href="/sightings_admin_page"><span class="fa fa-eye fa-lg"></span> Observations</a></li>            
+                {% endif %}
             </ul>
             <ul class="navbar-nav text-left">
                 {% if sitetype == 'user' %}
