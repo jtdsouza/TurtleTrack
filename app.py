@@ -257,8 +257,8 @@ def get_leaderboard_monthly():
     # Parse year and month from uploaded_at date
     '$project': {
         'RecorderInfo.Name': 1,
-        'year': {'$year': {'$toDate': '$TimeStamp.uploaded_at'}},
-        'month': {'$month': {'$toDate': '$TimeStamp.uploaded_at'}}
+        'year': {'$year': {'$toDate': '$TimeStamp.created_at'}},
+        'month': {'$month': {'$toDate': '$TimeStamp.created_at'}}
         }},
         {
     # Filter results by current year and month
