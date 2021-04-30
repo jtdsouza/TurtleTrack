@@ -694,7 +694,7 @@ def GetSightingDetail(sighting):
         TimeStamp=sighting.get("TimeStamp","")
         if TimeStamp != "":
             record["TimeStamp"]=TimeStamp.get("created_at","").split("T")[0]
-            record["Time"]=TimeStamp.get("created_at","").split("T")
+            record["Time"]=TimeStamp.get("created_at","").split("T")[1].split("Z")[0]
         ExpertLabels=sighting.get("ExpertLabels","")
         if ExpertLabels != "":
             record["Species"]=ExpertLabels.get("Species","")
@@ -1372,99 +1372,6 @@ def add_sighting():
 
     return json.dumps({'status':status})
 
-@app.route('/add_sighting2', methods=['POST'])   
-
-def add_sighting2():
-    #try:
-    data=request.values
-    print(data)
-    jsondata=request.json
-    print(jsondata)
-    #feedback["Images"]=data.get("images","")
-    #instance=datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
-    update=data.get("date","")
-    if update=="":
-        instance=datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
-    else:
-        instance=update+"T00:00:00Z"
-    #print(formdate,instance)
-    #forminstance=formdate.strftime("%Y-%m-%dT%H:%M:%SZ")
-    #print(forminstance)
-    #print("Adding feedback",request.values,feedback)
-    # Define MongoDB Sighting collection schema
-    sighting_schema = {
-        'RecorderInfo': {
-            'Name': data.get("newname",""),
-            'Email': data.get("newemail",""),
-            'Organization': data.get("org","")},
-        'TimeStamp': {
-            'created_at': instance,
-            'uploaded_at': instance},
-        'Location': {
-            'LocationName': '',
-            'GPS': {}},
-        'UserLabels': {
-            'Species': 'Box Turtle, Eastern',
-            'AnimalName': data.get("turtlename","")},
-        'References': {
-            'Source': 'Turtle Track'},
-        'Comments': {
-            'UserComments': data.get("notes","")}
-        }
-
-
-
-    # Remove null schema values and post record to MongoDB
-    cleanSightingSchema = cleanNullTerms(sighting_schema)
-    sighting_id = db.Sightings.insert_one(cleanSightingSchema).inserted_id
-    
-    uploaded_files=request.files.getlist('images')
-    print(len(uploaded_files))
-    for image in uploaded_files:
-        #uploaded_file.save(uploaded_file.filename)
-        print(image.filename)
-# Establish IBM COS client and write directly to S3
-        id = uuid.uuid1().hex
-        image_name = "TURTLETRACK/"+id+".jpg"
-        #cos.meta.client.upload_fileobj(image,
-        #                            Bucket = BLOB_BUCKET,
-        #                            Key = image_name)
-        #data=open(image, "rb")
-        img = BytesIO(image.read())        
-        data = Image.open(img, 'r')        
-        buf = BytesIO()        
-        data.save(buf, 'png')   
-        container_client.upload_blob(name=image_name, data=buf.getvalue())
-        artifact_schema = {
-        'ArtifactType': 'Carapace',
-        'MediaType': 'photo',
-        'Sighting' : sighting_id,
-        'TimeStamp': {
-            'created_at': '',
-            'uploaded_at': ''},
-        'References': {
-            'Source': 'Turtle Track',
-            's3_image_name': image_name}
-        }
-
-        cleanArtifactSchema = cleanNullTerms(artifact_schema)
-        artifact_id = db.Artifacts.insert_one(cleanArtifactSchema)
-        print("Artifact: ",artifact_id)
-
-
-
-
-
-        #print(feedbackid)
-    #except:
-    #    print("Error adding feedback")
-    #    status="Error"
-    #else:
-    status="OK "+str(sighting_id)
-
-    return json.dumps({'status':status})
-
-
 
 @app.route('/update_image_details', methods=['POST'])    
 def update_image_details():
@@ -1487,49 +1394,6 @@ def update_image_details():
         status="OK"
 
     return json.dumps({'status':status})
-
-### User Management Section ###
-@app.route('/users_admin_page')
-def users_admin_page():
-    return render_template("users-admin.html",sitetype="admin")
-
-@app.route('/get_users')
-def get_users():
-
-    search_str=request.args.get('search')
-    # sort=request.args.get('sort',type=str,default="")
-    # order=request.args.get('order')
-    sort='Name'
-    order='asc'
-    offset=request.args.get("offset",type=int,default=1)
-    limit=request.args.get("limit",type=int,default=10)
-    #("Params: ",search_str,sort,order,offset,limit)
-
-    if len(search_str)>0:
-        query_string={"$text": { "$search": search_str } }
-    else:
-        query_string={}
-
-    cursor=skiplimit(db["Users"],query_string,None,limit,offset,sort,order)
-    filtered_counter=db.Users.count_documents(query_string)
-    users = []
-
-    for doc in cursor:
-        doc['ID']=str(doc.pop('_id'))
-        users.append(doc)
-
-    Result={"total": filtered_counter, "rows":users}
- 
-    return jsonify(Result)
-
-@app.route('/update_user_details', methods=['POST'])    
-def update_user_details():
-    data=request.values
-    ID=data.get('ID')
-    field=data.get('Field')
-    value=data.get('Value')
-
-    db.Users.update_one({'_id': ObjectId(ID)}, {'$set': {field: value}})
 
 ### Species Management Section ###
 @app.route('/species_admin_page')

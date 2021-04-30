@@ -276,14 +276,14 @@
                         <div class="form-group row">
                             <label for="images" class="col-md-1 col-form-label">Images</label>
                             <div class="col-md-4">
-                                <input type="file" class="form-control" id="images" name="images" accept="image/*" multiple="multiple" onchange="loadFile(event)">      
+                                <input type="file" class="form-control" id="images" accept="image/*" multiple="multiple" onchange="loadFile(event)">      
                             </div> 
                         </div>
 
                         <div class="form-group row">
                             <label for="images" class="col-md-1 col-form-label"></label>
-                            <div class="col-md-11">
-                                <output id="turtles">
+                            <div class="col-md-10">
+                                <output id="turtles" >
 
                                 </output>
                             </div>
@@ -363,10 +363,73 @@
         $('#NewSightingModal').modal('show')});
 
 
-    $('#NewSightingform').on('submit', function(e){
+var numfiles=0
+var images=[]
+
+var loadFile = function(event) {
+	var output = document.getElementById('turtles');
+  var files=event.target.files
+  var str="<div class='row top-buffer'>";
+  var imagebucket = document.createElement("div");
+  imagebucket.setAttribute("class", "row");
+  for (var i = 0; i < files.length; i++) {
+        var file = files[i];
+        images.push(file);
+        numfiles=numfiles+1;
+        //Only pics
+        if (!file.type.match('image'))
+          continue;
+        if (i>0 && i%4==0) {
+          str=str+"</div> <div class='row top-buffer'>";
+          }
+        str=str+"<div id='content_"+numfiles+"' class='col-md-3' style='position: relative'>"  
+        str = str+"<img src='" + URL.createObjectURL(event.target.files[i]) + "' class='img-fluid img-thumbnail' />";
+        str=str+"<i onclick='img_delete("+numfiles+")' class='fa fa-minus-circle' style='position: absolute; top: 4px; right: 5px'></i>"
+        //str=str+"<a class='remove-image' href='#' style='position: absolute; top: 4px; right: 5px'>&#215;</a>"
+        str=str+"</div>"
+      }
+  str=str+"</div>"
+  imagebucket.innerHTML=str;
+  output.insertBefore(imagebucket, null);
+};
+
+function img_delete(i) {
+    id="content_"+i;
+    //console.log(id);
+    var todel=document.getElementById(id);
+    delete images[i-1]
+    todel.remove();
+
+};
+
+function loading(){
+
+     document.getElementById("save").innerHTML = "Saving, please wait ...";
+};
+
+
+
+$('#NewSightingform').on('submit', function(e){
     e.preventDefault();
     var formdata=new FormData(this);
-    console.log(formdata)
+    var prints=[];
+
+    console.log(images.length);
+    if (images.length==0) {
+      alert("Please include at least one image before submitting this form");
+    }
+    else {
+    for (var i = 0; i < images.length; i++) {
+      if (!(typeof images[i] === 'undefined')){
+        prints.push(images[i]);
+        formdata.append("images",images[i]);
+      }
+      //console.log(images[i]);
+    }
+    }
+
+
+    //console.log(formdata);
     //data=$('#NewSightingform').serialize();
     //File data
   
@@ -390,46 +453,6 @@
 			    }
     });
 });
-
-var loadFile = function(event) {
-	var output = document.getElementById('turtles');
-  var files=event.target.files
-  var str=""
-  var div = document.createElement("div");
-  for (var i = 0; i < files.length; i++) {
-        var file = files[i];
-        //Only pics
-        if (!file.type.match('image'))
-          continue;
-          if (i==0)
-            str=str+"<div class='row'>";
-          else if (i%4==0)
-            str=str+"</div><div class='row'>"
-          str=str+"<div id='content_"+i+"' class='col-md-3' style='position: relative'>"    
-          str = str+"<img src='" + URL.createObjectURL(event.target.files[i]) + "' class='img-fluid img-thumbnail' style='width: 200px' />";
-          str=str+"<i onclick='img_delete("+i+")' class='fa fa-minus-circle' style='position: absolute; top: 4px; right: 5px'></i>"
-          //str=str+"<a class='remove-image' href='#' style='position: absolute; top: 4px; right: 5px'>&#215;</a>"
-          str=str+"</div>"
-          output.insertBefore(div, null);
-      }
-  str=str+"</div>"
-  div.innerHTML=str
-};
-
-function img_delete(i) {
-    id="content_"+i;
-    //console.log(id);
-    var todel=document.getElementById(id);
-    todel.remove();
-
-};
-
-function loading(){
-
-     document.getElementById("save").innerHTML = "Saving, please wait ...";
-};
-
-
 
 
 
