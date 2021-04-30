@@ -125,12 +125,15 @@ def get_blob(item_name):
 
 
 def Get_Inference(value,confidence,threshold):
-    if confidence=="nan":
-        confidence=0
-    if float(confidence)<float(threshold):
+    try:
+        if confidence=="nan":
+            confidence=0
+        if float(confidence)<float(threshold):
+            result="Unknown"
+        else:
+            result=value+" ("+confidence+"%)"
+    except:
         result="Unknown"
-    else:
-        result=value+" ("+confidence+"%)"
     return result
 
 def skiplimit(dbcoll,query_string={},project_string={},page_size=10, offset=0,sort=None,order=""):
@@ -694,7 +697,7 @@ def GetSightingDetail(sighting):
         TimeStamp=sighting.get("TimeStamp","")
         if TimeStamp != "":
             record["TimeStamp"]=TimeStamp.get("created_at","").split("T")[0]
-            record["Time"]=TimeStamp.get("created_at","").split("T")[1].split("Z")[0]
+            record["Time"]=TimeStamp.get("created_at","T").split("T")[1].split("Z")[0]
         ExpertLabels=sighting.get("ExpertLabels","")
         if ExpertLabels != "":
             record["Species"]=ExpertLabels.get("Species","")
