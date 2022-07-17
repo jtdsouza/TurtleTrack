@@ -14,6 +14,7 @@ from datetime import datetime
 import uuid
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient, __version__
 from io import BytesIO
+import certifi
 app = Flask(__name__)
 app.config['BASIC_AUTH_USERNAME'] = 'turtletrekker'
 app.config['BASIC_AUTH_PASSWORD'] = 'turtletrekker'
@@ -47,7 +48,7 @@ FIELD_FACTOR=1.1 #Multiply fielf confidences by this factor
 blob_service_client = BlobServiceClient.from_connection_string(AZURE_CONNECT_STRING)
 container_client = blob_service_client.get_container_client(AZURE_BLOB_CONTAINER)
 
-client = pymongo.MongoClient("mongodb+srv://wildtrackdev:wildtrackai2020!@cluster0-abxwt.azure.mongodb.net/admin?retryWrites=true&w=majority")
+client = pymongo.MongoClient("mongodb+srv://wildtrackdev:wildtrackai2020!@cluster0-abxwt.azure.mongodb.net/admin?retryWrites=true&w=majority",tlsCAFile=certifi.where())
 db = client[MONGO_DB]
 colsightings= db["Sightings"]
 colartifacts= db["Artifacts"]
